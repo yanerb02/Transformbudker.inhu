@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Portal TBK Inhu</title>
+<meta name="theme-color" content="#134a44">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Portal TBK">
+<link rel="manifest" id="mf">
+<link rel="apple-touch-icon" id="ai">
+<link rel="icon" id="fi">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#122622;--ink-soft:#3d5852;--teal-900:#0e3733;--teal-800:#134a44;--teal-700:#1b5e56;--teal-500:#2a7d70;--teal-100:#e4efec;--gold:#c08a2e;--gold-soft:#f3ddaf;--paper:#f7f6f1;--paper-card:#fff;--line:#e3ded0;--good:#2f7a4f;--good-bg:#e6f2ea;--bad:#b0472c;--bad-bg:#fbeae4;--shadow:0 1px 2px rgba(18,38,34,.05),0 10px 28px -14px rgba(18,38,34,.2)}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif}
+body{background:var(--paper);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.tab,th,.brand-text strong,.kpi-label,.section-eyebrow,.btn,label.f{font-family:'Manrope',-apple-system,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+header.top{background:linear-gradient(155deg,var(--teal-900) 0%,var(--teal-800) 55%,var(--teal-700) 100%);color:#eef4f2;padding:30px 0 96px;position:relative;overflow:hidden}
+header.top.slim{padding-bottom:40px}
+header.top::after{content:"";position:absolute;right:-120px;top:-160px;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(233,200,135,.16),transparent 65%)}
+.top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:42px;height:42px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--teal-900);font-size:17px;flex-shrink:0;font-family:Manrope,sans-serif}
+.brand-text{font-size:13px;color:#cfe1db}.brand-text strong{display:block;color:#fff;font-size:15px;font-weight:700}
+.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.period-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:6px 12px;border-radius:100px;font-size:12.5px;color:#e4efec;white-space:nowrap}
+.period-pill select{background:transparent;border:0;color:#fff;font:inherit;font-weight:600;outline:0;cursor:pointer}
+.period-pill select option{color:#122622}
+.pill-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:100px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.pill-btn:hover{background:rgba(255,255,255,.22)}
+.nav{display:flex;gap:8px;margin-top:22px;position:relative;z-index:1;flex-wrap:wrap;align-items:center}
+.nav .nb{background:transparent;border:1px solid rgba(255,255,255,.28);color:#e4efec;border-radius:100px;padding:8px 16px;font:600 13px Manrope,sans-serif;cursor:pointer}
+.nav .nb.on{background:var(--gold);border-color:var(--gold);color:var(--teal-900)}
+.nav .sp{flex:1}
+.hero-title{font-size:31px;font-weight:800;margin:26px 0 8px;max-width:680px;letter-spacing:-.01em;line-height:1.2;color:#fff;position:relative;z-index:1}
+.slim .hero-title{font-size:25px;margin-top:20px}
+.hero-sub{font-size:15px;color:#c9ded7;max-width:600px;margin:0;position:relative;z-index:1}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:-58px;position:relative;z-index:2}
+.kpi-card{background:var(--paper-card);border-radius:14px;padding:20px 20px 18px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.kpi-label{font-size:12px;color:var(--ink-soft);font-weight:600;margin:0 0 8px}
+.kpi-value{font-size:23px;font-weight:800;color:var(--teal-900);letter-spacing:-.01em;font-family:Manrope,sans-serif}
+.kpi-sub{font-size:12.5px;color:var(--ink-soft);margin-top:4px}.kpi-sub.good{color:var(--good)}.kpi-sub.bad{color:var(--bad)}
+main{padding:76px 0 40px}main.input{padding-top:28px}
+section{margin-bottom:52px}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.section-eyebrow{font-size:12.5px;font-weight:700;color:var(--gold);letter-spacing:.02em;margin:0 0 4px}
+.section-title{font-size:21px;font-weight:800;margin:0;color:var(--teal-900)}
+.section-note{font-size:13px;color:var(--ink-soft);max-width:420px;text-align:right;margin:0}
+.panel{background:var(--paper-card);border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow);padding:26px}
+.chart-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:28px}
+.barchart{display:flex;height:270px;gap:8px;position:relative;padding-left:56px}
+.gridlines{position:absolute;left:56px;right:0;top:22px;bottom:34px}
+.gridline{position:absolute;left:0;right:0;border-top:1px dashed var(--line)}
+.gridline span{position:absolute;left:-58px;top:-8px;width:52px;text-align:right;font-size:10px;color:var(--ink-soft);white-space:nowrap}
+.bar-col{flex:1;position:relative;height:270px;min-width:0}
+.bar-stack{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);width:80%;max-width:52px;height:214px;display:flex;flex-direction:column-reverse;border-radius:4px 4px 0 0;overflow:hidden}
+.bar-seg:hover{opacity:.75}
+.bar-month-label{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--ink-soft);font-weight:600;white-space:nowrap}
+.bar-total-label{position:absolute;bottom:256px;left:50%;transform:translateX(-50%);font-size:10.5px;color:var(--teal-900);font-weight:700;white-space:nowrap}
+.chip-legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:18px}
+.chip-legend .chip{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft)}.chip-legend .dot{width:8px;height:8px;border-radius:2px}
+.donut-wrap{display:flex;flex-direction:column;align-items:center}
+.donut{width:180px;height:180px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e5e9e7}
+.donut-hole{width:106px;height:106px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px var(--line)}
+.donut-hole .v{font-size:15px;font-weight:800;color:var(--teal-900);font-family:Manrope,sans-serif}
+.donut-hole .l{font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
+.legend-list{display:flex;flex-direction:column;gap:9px;margin-top:18px;font-size:12.5px;width:100%}
+.legend-item{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.legend-left{display:flex;align-items:center;gap:8px}.legend-dot{width:9px;height:9px;border-radius:50%}
+.legend-val{font-weight:700;color:var(--teal-900)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tab{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:100px;font-size:12.5px;font-weight:600;color:var(--ink-soft);cursor:pointer}
+.tab:hover{border-color:var(--teal-500);color:var(--teal-800)}.tab.active{background:var(--teal-800);border-color:var(--teal-800);color:#fff}
+.cat-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.mini-stat{background:var(--teal-100);border-radius:12px;padding:16px 18px}
+.mini-stat .k{font-size:11.5px;color:var(--teal-800);font-weight:700;margin-bottom:6px}
+.mini-stat .v{font-size:19px;font-weight:800;color:var(--teal-900);font-family:Manrope,sans-serif}
+.linechart-wrap{margin-bottom:26px}.linechart-wrap svg{width:100%;height:220px;overflow:visible}
+.lc-dot{fill:#fff;stroke-width:2.5}.lc-label{font-size:10.5px;fill:var(--ink-soft)}.lc-val{font-size:10.5px;font-weight:700;font-family:Manrope,sans-serif}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:10px 12px;font-size:11.5px;font-weight:700;color:var(--ink-soft);border-bottom:1.5px solid var(--line);white-space:nowrap}
+thead th.num,td.num{text-align:right;white-space:nowrap}
+tbody td{padding:11px 12px;border-bottom:1px solid var(--line)}
+tbody tr:hover{background:#faf9f4}tbody td.name{font-weight:600;min-width:200px}
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:var(--teal-100);color:var(--teal-800);font-size:11.5px;font-weight:700}
+.trend-chip,.chip-s{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.trend-chip.good,.chip-s.ok{background:var(--good-bg);color:var(--good)}.trend-chip.bad,.chip-s.no{background:var(--bad-bg);color:var(--bad)}.trend-chip.na{background:#eef0ee;color:#7b8a86}
+.search-box{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:9px 13px;background:#fff;max-width:320px;margin-bottom:12px}
+.search-box input{border:none;outline:none;font-size:13px;width:100%;font-family:inherit;color:var(--ink)}
+.table-scroll{overflow-x:auto}
+.note-banner{background:var(--gold-soft);border:1px solid #d8b876;color:#5c4210;border-radius:12px;padding:14px 18px;font-size:13px;margin-bottom:28px;display:flex;gap:10px}
+.empty-msg{padding:22px;text-align:center;color:var(--ink-soft);font-size:13px}
+footer{border-top:1px solid var(--line);padding:24px 0 40px;font-size:12.5px;color:var(--ink-soft)}
+.wf-row{display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:center;margin-bottom:10px}
+.wf-row .l{font-size:12px;font-weight:600;color:var(--ink-soft)}.wf-row.sel .l{color:var(--teal-900);font-weight:800}
+.wf-bar{display:flex;height:30px;border-radius:8px;overflow:hidden;background:#eef0ee}
+.wf-bar i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:11.5px;font-weight:700;color:#fff;min-width:0;overflow:hidden}
+.wf-key{display:flex;gap:16px;font-size:12px;color:var(--ink-soft);margin:6px 0 16px}.wf-key b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+.skm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.skm-card{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fff}
+.skm-card h4{margin:0 0 10px;font-size:13.5px;color:var(--teal-900);line-height:1.3}
+.skm-card .big{font-size:30px;font-weight:800;font-family:Manrope,sans-serif;color:var(--teal-900);line-height:1}
+.skm-card .meta{font-size:12px;color:var(--ink-soft);margin-top:8px}
+.mu{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11.5px;font-weight:800;color:#fff;margin-left:8px;vertical-align:middle}
+.mu.A{background:var(--teal-700)}.mu.B{background:var(--teal-500)}.mu.C{background:var(--gold)}.mu.D{background:var(--bad)}
+.progress{height:10px;background:#e8ece9;border-radius:10px;overflow:hidden;margin:8px 0 6px}.progress i{display:block;height:100%;background:var(--teal-500)}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(155deg,var(--teal-900),var(--teal-700))}
+.login-card{background:#fff;border-radius:18px;padding:28px;width:100%;max-width:390px;box-shadow:0 20px 50px -20px rgba(0,0,0,.5)}
+.login-card .brand{margin-bottom:6px}.login-card .brand-text{color:var(--ink-soft)}.login-card .brand-text strong{color:var(--teal-900)}
+.login-card h2{margin:18px 0 2px;font-size:20px;color:var(--teal-900)}
+label.f{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin:14px 0 5px}
+input.t,select.t{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:14px;background:#fff;color:var(--ink)}
+input.t:focus,select.t:focus{border-color:var(--teal-500);outline:3px solid var(--teal-100)}
+input.t.err{border-color:var(--bad);background:#fff7f5}
+.btn{background:var(--teal-800);color:#fff;border:0;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--teal-700)}.btn:disabled{opacity:.6}.btn.full{width:100%;margin-top:18px}
+.btn.ghost{background:#fff;color:var(--teal-800);border:1px solid var(--teal-800)}
+.chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink-soft);margin-top:12px}
+.warn{background:var(--gold-soft);border:1px solid #d8b876;color:#5c4210;border-radius:10px;padding:9px 12px;font-size:12.5px;margin-top:14px}
+.form-panel{margin-bottom:22px}
+h4.fg{margin:20px 0 4px;font-size:13px;color:var(--teal-800);text-transform:uppercase;letter-spacing:.03em}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
+.tot{margin-top:16px;padding:12px 16px;border-radius:10px;background:var(--teal-100);font-size:14px;color:var(--teal-900);display:flex;justify-content:space-between;gap:10px}
+.prow{display:grid;grid-template-columns:1fr 170px 38px;gap:8px;margin-bottom:8px}
+.x{border:0;background:var(--bad-bg);color:var(--bad);border-radius:10px;font-size:18px;cursor:pointer}
+.hint{font-size:12px;color:var(--ink-soft);margin:6px 0 0}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#122622;color:#fff;padding:11px 18px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:99;max-width:90vw;text-align:center}#toast.on{opacity:1}
+@media (max-width:820px){.wrap{padding:0 16px}.kpi-row{grid-template-columns:repeat(2,1fr);gap:10px}.kpi-card{padding:14px}.kpi-value{font-size:19px}.chart-grid,.cat-summary,.skm-grid,.form-grid{grid-template-columns:1fr}.hero-title{font-size:25px}.section-note{text-align:left}.panel{padding:18px}.prow{grid-template-columns:1fr 120px 38px}}
+@media print{header .top-actions,.nav,.tabs,.search-box,footer,.pill-btn,#toast{display:none!important}header.top{padding-bottom:70px;-webkit-print-color-adjust:exact;print-color-adjust:exact}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}section{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* ================= KONFIGURASI ================= */
+// Kosong = MODE UJI COBA (data hanya di perangkat ini, sandi semua akun: demo).
+// Isi dengan URL Web App Google Apps Script (lihat Code.gs) agar semua PD menyimpan ke satu tempat.
+const CLOUD_URL = '';
+const DEADLINE = {'2026-10': '2026-11-09'};
+const ROSTER = [{"u":"setda","nama":"Sekretariat Daerah","peran":"pd","modul":"keu"},{"u":"setwan","nama":"Sekretariat Dewan Perwakilan Rakyat","peran":"pd","modul":"keu"},{"u":"inspektorat","nama":"Inspektorat Daerah","peran":"pd","modul":"keu"},{"u":"bkpp","nama":"Badan Kepegawaian, Pendidikan dan Pelatihan Daerah","peran":"pd","modul":"keu,wfh"},{"u":"disdikbud","nama":"Dinas Pendidikan dan Kebudayaan","peran":"pd","modul":"keu"},{"u":"dinkes","nama":"Dinas Kesehatan","peran":"pd","modul":"keu"},{"u":"dispupr","nama":"Dinas Pekerjaan Umum, Penataan Ruang, Perumahan dan Kawasan Permukiman","peran":"pd","modul":"keu"},{"u":"dp2kbp3a","nama":"Dinas Pengendalian Penduduk, Keluarga Berencana, Pemberdayaan Perempuan dan Perlindungan Anak","peran":"pd","modul":"keu"},{"u":"dlh","nama":"Dinas Lingkungan Hidup, Kebersihan dan Pertamanan","peran":"pd","modul":"keu"},{"u":"disdukcapil","nama":"Dinas Kependudukan dan Pencatatan Sipil","peran":"pd","modul":"keu,skm"},{"u":"disperindagkop","nama":"Dinas Perindustrian, Perdagangan, Koperasi, Usaha Kecil dan Menengah","peran":"pd","modul":"keu"},{"u":"dpmptsp","nama":"Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu","peran":"pd","modul":"keu"},{"u":"disbunnakkan","nama":"Dinas Perkebunan, Peternakan dan Perikanan","peran":"pd","modul":"keu"},{"u":"dinsos","nama":"Dinas Sosial","peran":"pd","modul":"keu,skm"},{"u":"disnaker","nama":"Dinas Tenaga Kerja","peran":"pd","modul":"keu"},{"u":"dkptph","nama":"Dinas Ketahanan Pangan, Tanaman Pangan dan Hortikultura","peran":"pd","modul":"keu"},{"u":"dpmd","nama":"Dinas Pemberdayaan Masyarakat dan Desa","peran":"pd","modul":"keu"},{"u":"dishub","nama":"Dinas Perhubungan","peran":"pd","modul":"keu"},{"u":"diskominfo","nama":"Dinas Komunikasi, Informatika, dan Statistik","peran":"pd","modul":"keu"},{"u":"disporapar","nama":"Dinas Kepemudaan, Olahraga dan Pariwisata","peran":"pd","modul":"keu"},{"u":"dispersip","nama":"Dinas Perpustakaan dan Kearsipan","peran":"pd","modul":"keu"},{"u":"satpolpp","nama":"Satuan Polisi Pamong Praja","peran":"pd","modul":"keu"},{"u":"bapperida","nama":"Badan Perencanaan Pembangunan, Riset dan Inovasi Daerah","peran":"pd","modul":"keu"},{"u":"bapenda","nama":"Badan Pendapatan Daerah","peran":"pd","modul":"keu"},{"u":"bpkad","nama":"Badan Pengelolaan Keuangan dan Aset Daerah","peran":"pd","modul":"keu,prog"},{"u":"kesbangpol","nama":"Badan Kesatuan Bangsa dan Politik","peran":"pd","modul":"keu"},{"u":"bpbd","nama":"Badan Penanggulangan Bencana Daerah, Pemadam Kebakaran dan Penyelamatan","peran":"pd","modul":"keu"},{"u":"kec-batangcenaku","nama":"Kecamatan Batang Cenaku","peran":"pd","modul":"keu"},{"u":"kec-batanggansal","nama":"Kecamatan Batang Gansal","peran":"pd","modul":"keu"},{"u":"kec-batangperanap","nama":"Kecamatan Batang Peranap","peran":"pd","modul":"keu"},{"u":"kec-kelayang","nama":"Kecamatan Kelayang","peran":"pd","modul":"keu"},{"u":"kec-kualacenaku","nama":"Kecamatan Kuala Cenaku","peran":"pd","modul":"keu"},{"u":"kec-lirik","nama":"Kecamatan Lirik","peran":"pd","modul":"keu"},{"u":"kec-lubukbatujaya","nama":"Kecamatan Lubuk Batu Jaya","peran":"pd","modul":"keu"},{"u":"kec-pasirpenyu","nama":"Kecamatan Pasir Penyu","peran":"pd","modul":"keu"},{"u":"kec-peranap","nama":"Kecamatan Peranap","peran":"pd","modul":"keu"},{"u":"kec-rakitkulim","nama":"Kecamatan Rakit Kulim","peran":"pd","modul":"keu"},{"u":"kec-rengat","nama":"Kecamatan Rengat","peran":"pd","modul":"keu"},{"u":"kec-rengatbarat","nama":"Kecamatan Rengat Barat","peran":"pd","modul":"keu"},{"u":"kec-seberida","nama":"Kecamatan Seberida","peran":"pd","modul":"keu"},{"u":"kec-sungailala","nama":"Kecamatan Sungai Lala","peran":"pd","modul":"keu"},{"u":"rsud","nama":"RSUD Indrasari","peran":"pd","modul":"skm"},{"u":"organisasi","nama":"Bagian Organisasi Setda","peran":"admin","modul":""},{"u":"pimpinan","nama":"Pimpinan (lihat dashboard)","peran":"viewer","modul":""}];
+
+/* ================= DEFINISI DATA ================= */
+// h:1 = termasuk "penghematan" (lampiran G-L); g = arah yang dianggap baik
+const FIELDS = [
+ {k:'pd', l:'',  t:'Realisasi perjalanan dinas', s:'Perjalanan Dinas', i:'✈️', g:'down'},
+ {k:'pbp',l:'B', t:'Pembatasan perjalanan dinas', s:'Pembatasan Perj. Dinas', i:'🚫', g:'up'},
+ {k:'pbk',l:'C', t:'Pembatasan kendaraan dinas', s:'Pembatasan Kendaraan', i:'🚗', g:'up'},
+ {k:'kl', l:'D', t:'Peningkatan penggunaan kendaraan listrik', s:'Kendaraan Listrik', i:'🔌', g:'up'},
+ {k:'tu', l:'E', t:'Peningkatan penggunaan transportasi umum', s:'Transportasi Umum', i:'🚌', g:'up'},
+ {k:'sj', l:'F', t:'Peningkatan penggunaan transportasi sepeda/jalan kaki', s:'Sepeda/Jalan Kaki', i:'🚲', g:'up'},
+ {k:'hl', l:'G', t:'Penghematan listrik', s:'Listrik', i:'⚡', g:'up', h:1},
+ {k:'hb', l:'H', t:'Penghematan BBM', s:'BBM', i:'⛽', g:'up', h:1},
+ {k:'ha', l:'I', t:'Penghematan air', s:'Air', i:'💧', g:'up', h:1},
+ {k:'ht', l:'J', t:'Penghematan telepon/komunikasi', s:'Telepon/Komunikasi', i:'📞', g:'up', h:1},
+ {k:'ho', l:'K', t:'Penghematan operasional pegawai', s:'Operasional Pegawai', i:'👥', g:'up', h:1},
+ {k:'hx', l:'L', t:'Penghematan lainnya', s:'Lainnya', i:'➕', g:'up', h:1}
+];
+const HEMAT = FIELDS.filter(f=>f.h), SAVE_KEYS = HEMAT.map(f=>f.k);
+const COLORS = ['#1b5e56','#c08a2e','#3d7a8f','#7a5c3d','#5e7a3d','#8f4b3d'];
+const BLN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const PERIODS = []; for(let y=2026;y<=2027;y++)for(let m=1;m<=12;m++){ if(y===2026&&m<10)continue; PERIODS.push(y+'-'+String(m).padStart(2,'0')); }
+
+/* ================= UTIL ================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const th = n => { n=Math.round(+n||0); return (n<0?'-':'')+String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); };
+const nf = (n,d) => (+n).toLocaleString('id-ID',{maximumFractionDigits:d==null?2:d});
+function rp(n,c){ n=Math.round(+n||0); if(c){const a=Math.abs(n); if(a>=1e9)return 'Rp '+nf(n/1e9,1)+' M'; if(a>=1e6)return 'Rp '+nf(n/1e6,1)+' Jt';} return 'Rp '+th(n); }
+const pl = p => { const a=p.split('-'); return BLN[a[1]-1]+' '+a[0]; };
+const ps = p => { const a=p.split('-'); return BLN[a[1]-1].slice(0,3)+' '+a[0].slice(2); };
+const prevP = p => { let a=p.split('-').map(Number),y=a[0],m=a[1]-1; if(!m){m=12;y--;} return y+'-'+String(m).padStart(2,'0'); };
+const num = s => { const d=String(s).replace(/[^\d]/g,''); return d?+d:0; };
+const dec = s => { const v=parseFloat(String(s).replace(',','.')); return isNaN(v)?null:v; };
+const dt = at => new Date(at).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove('on'),2800); }
+const safe = (n,f) => { try{ return f(); }catch(e){ console.error(n,e); return '<div class="empty-msg">Bagian "'+n+'" gagal ditampilkan.</div>'; } };
+
+/* ================= STATE & AKSES DATA ================= */
+let ST = {me:null,cred:null,users:ROSTER,db:{},period:'2026-10',view:'dash',cat:'hl',target:null,q:'',pr:null};
+const mods = u => String(u.modul||'').split(',').filter(Boolean);
+const has = (u,m) => mods(u).includes(m);
+const pdUsers = () => ST.users.filter(u=>u.peran==='pd');
+const keuUsers = () => pdUsers().filter(u=>has(u,'keu'));
+const skmUsers = () => pdUsers().filter(u=>has(u,'skm'));
+const R = (p,k) => (ST.db[p]||{})[k];
+const KV = (p,u,f) => { const r=R(p,'keu:'+u); return r&&r.v ? (+r.v[f]||0) : null; };
+const SUM = (p,fs) => keuUsers().reduce((a,u)=>a+fs.reduce((b,f)=>b+(KV(p,u.u,f)||0),0),0);
+const withData = () => PERIODS.filter(p=>Object.keys(ST.db[p]||{}).length);
+const canInput = u => !!u && (u.peran==='admin' || (u.peran==='pd' && mods(u).length>0));
+function canWrite(u,key){ if(u.peran==='admin')return true; if(key==='keu:'+u.u)return has(u,'keu'); if(key==='skm:'+u.u)return has(u,'skm'); if(key==='wfh')return has(u,'wfh'); if(key==='prog')return has(u,'prog'); return false; }
+function tasks(p){ const t=[]; pdUsers().forEach(u=>{ if(has(u,'keu'))t.push({u,k:'keu:'+u.u,l:'Keuangan'}); if(has(u,'skm'))t.push({u,k:'skm:'+u.u,l:'SKM'}); if(has(u,'wfh'))t.push({u,k:'wfh',l:'WFH/WFO'}); if(has(u,'prog'))t.push({u,k:'prog',l:'Pemanfaatan'}); }); return t.map(x=>Object.assign({},x,{r:R(p,x.k)})); }
+function mutu(v){ if(v>=88.31)return['A','Sangat Baik']; if(v>=76.61)return['B','Baik']; if(v>=65)return['C','Kurang Baik']; if(v>=25)return['D','Tidak Baik']; return['D','Tidak Baik']; }
+function skmAgg(p){ const L=skmUsers().map(u=>({u,r:R(p,'skm:'+u.u)})).filter(x=>x.r); const rs=L.reduce((a,x)=>a+(+x.r.resp||0),0); const avg=!L.length?null:(rs>0?L.reduce((a,x)=>a+x.r.ikm*x.r.resp,0)/rs:L.reduce((a,x)=>a+x.r.ikm,0)/L.length); return {L,rs,avg}; }
+function trend(v,pv,good){ if(v==null||pv==null)return '<span class="trend-chip na">–</span>'; if(v===pv)return '<span class="trend-chip na">0%</span>'; const d=v-pv, pct=pv!==0?Math.abs(d/pv*100):100, up=d>0, ok=(good==='up')===up; return '<span class="trend-chip '+(ok?'good':'bad')+'">'+(up?'&#8593;':'&#8595;')+' '+nf(pct,0)+'%</span>'; }
+
+/* ================= PWA (ikon & manifest ditanam) ================= */
+(function(){ try{
+  const c=document.createElement('canvas'); c.width=c.height=512; const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,512,512); g.addColorStop(0,'#0e3733'); g.addColorStop(1,'#1b5e56'); x.fillStyle=g; x.fillRect(0,0,512,512);
+  x.fillStyle='#c08a2e'; x.beginPath(); x.moveTo(156,96); x.arcTo(356,96,356,296,60); x.arcTo(356,296,156,296,60); x.arcTo(156,296,156,96,60); x.arcTo(156,96,356,96,60); x.fill();
+  x.fillStyle='#0e3733'; x.font='800 120px Manrope,Arial,sans-serif'; x.textAlign='center'; x.fillText('IH',256,226);
+  x.fillStyle='#fff'; x.font='800 104px Manrope,Arial,sans-serif'; x.fillText('TBK',256,420);
+  const png=c.toDataURL('image/png'); $('#ai').href=png; $('#fi').href=png;
+  const m={name:'Portal Pelaporan Transformasi Budaya Kerja Inhu',short_name:'Portal TBK',start_url:location.href.split('#')[0],display:'standalone',background_color:'#134a44',theme_color:'#134a44',icons:[{src:png,sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
+  $('#mf').href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));
+}catch(e){} })();
+
+/* ================= API (cloud / uji coba) ================= */
+async function call(action,payload){
+  if(!CLOUD_URL) return local(action,payload||{});
+  const body=Object.assign({action,u:ST.cred.u,p:ST.cred.p},payload||{});
+  const r=await fetch(CLOUD_URL,{method:'POST',body:JSON.stringify(body)});
+  return r.json();
+}
+function local(a,pay){
+  const U=ROSTER.find(x=>x.u===ST.cred.u);
+  if(!U||ST.cred.p!=='demo') return {ok:false,msg:'Username atau password salah'};
+  let db={}; try{db=JSON.parse(localStorage.getItem('tbk_demo')||'{}');}catch(e){}
+  if(a==='login'||a==='all') return {ok:true,me:U,users:ROSTER,db};
+  if(a==='save'){ if(!canWrite(U,pay.key))return {ok:false,msg:'Tidak berhak mengisi bagian ini'}; (db[pay.period]=db[pay.period]||{})[pay.key]=pay.rec; localStorage.setItem('tbk_demo',JSON.stringify(db)); return {ok:true}; }
+  return {ok:false};
+}
+function applyAll(r){ ST.me=r.me; ST.users=(r.users&&r.users.length)?r.users:ROSTER; ST.db=r.db||{}; }
+async function reload(){ const r=await call('all'); if(!r.ok)throw new Error(r.msg||'Gagal memuat'); applyAll(r); }
+
+/* ================= LOGIN ================= */
+function loginView(){
+  $('#root').innerHTML='<div class="login-wrap"><div class="login-card"><div class="brand"><div class="brand-mark">IH</div><div class="brand-text"><strong>Sekretariat Daerah</strong>Kabupaten Indragiri Hulu</div></div>'+
+  '<h2>Portal Pelaporan TBK</h2><div class="hint">Transformasi Budaya Kerja &middot; masuk dengan akun Perangkat Daerah</div>'+
+  '<label class="f">Username</label><input class="t" id="lu" autocapitalize="none" autocomplete="username" spellcheck="false">'+
+  '<label class="f">Password</label><input class="t" id="lp" type="password" autocomplete="current-password" onkeydown="if(event.key===\'Enter\')doLogin()">'+
+  '<label class="chk"><input type="checkbox" id="lk"> Ingat saya di perangkat ini</label>'+
+  '<button class="btn full" id="lb" onclick="doLogin()">Masuk</button>'+
+  (CLOUD_URL?'':'<div class="warn"><b>Mode uji coba.</b> Semua akun memakai password <b>demo</b>; data hanya tersimpan di perangkat ini.</div>')+
+  '</div></div>';
+}
+async function doLogin(){
+  const u=$('#lu').value.trim().toLowerCase(), p=$('#lp').value, keep=$('#lk').checked, b=$('#lb');
+  if(!u||!p) return toast('Isi username dan password');
+  b.disabled=true; b.textContent='Memeriksa…'; ST.cred={u,p};
+  try{
+    const r=await call('all');
+    if(!r.ok){ ST.cred=null; b.disabled=false; b.textContent='Masuk'; return toast(r.msg||'Username atau password salah'); }
+    applyAll(r);
+    try{ (keep?localStorage:sessionStorage).setItem('tbk_c',JSON.stringify(ST.cred)); }catch(e){}
+    const w=withData(); ST.period=w.length?w[w.length-1]:'2026-10'; ST.view='dash'; render();
+  }catch(e){ ST.cred=null; b.disabled=false; b.textContent='Masuk'; toast('Tidak dapat terhubung ke server'); }
+}
+function logout(){ try{localStorage.removeItem('tbk_c');sessionStorage.removeItem('tbk_c');}catch(e){} ST.me=null; ST.cred=null; ST.pr=null; loginView(); }
+async function go(v){ ST.view=v; ST.pr=null; if(v==='dash'){ try{await reload();}catch(e){} } render(); }
+function setPeriod(p){ ST.period=p; ST.pr=null; render(); }
+async function refresh(){ try{ await reload(); render(); toast('Data dimuat ulang'); }catch(e){ toast(e.message); } }
+
+/* ================= RENDER UTAMA ================= */
+function render(){
+  if(!ST.me){ loginView(); return; }
+  const y=window.scrollY;
+  $('#root').innerHTML = ST.view==='input'&&canInput(ST.me) ? head(true)+inputView()+foot() : head(false)+dashView()+foot();
+  if($('#keuTot')) keuTot();
+  if($('#prRows')) prDraw();
+  window.scrollTo(0,y);
+}
+function head(slim){
+  const me=ST.me, p=ST.period, isIn=ST.view==='input'&&canInput(me);
+  const stat = me.peran!=='pd' ? '<button class="pill-btn" onclick="exportXlsx()">⬇ Excel</button><button class="pill-btn" onclick="window.print()">🖨 Cetak</button>' : '';
+  return '<header class="top '+(slim?'slim':'')+'"><div class="wrap"><div class="top-row"><div class="brand"><div class="brand-mark">IH</div><div class="brand-text"><strong>Sekretariat Daerah</strong>Pemerintah Kabupaten Indragiri Hulu</div></div>'+
+  '<div class="top-actions"><label class="period-pill">Periode&nbsp;<select onchange="setPeriod(this.value)">'+PERIODS.map(x=>'<option value="'+x+'"'+(x===p?' selected':'')+'>'+pl(x)+'</option>').join('')+'</select></label><button class="pill-btn" onclick="logout()">Keluar</button></div></div>'+
+  '<nav class="nav"><button class="nb '+(!isIn?'on':'')+'" onclick="go(\'dash\')">Dashboard</button>'+(canInput(me)?'<button class="nb '+(isIn?'on':'')+'" onclick="go(\'input\')">Isi Laporan</button>':'')+'<span class="sp"></span>'+(isIn?'':'<button class="pill-btn" onclick="refresh()">⟳ Muat ulang</button>'+stat)+'</nav>'+
+  (isIn?'<h1 class="hero-title">Isi Laporan Bulanan</h1><p class="hero-sub">Data bulan '+pl(p)+'. Laporan dapat diperbarui kapan saja sebelum batas waktu.</p>':
+  '<h1 class="hero-title">Pelaporan Transformasi Budaya Kerja</h1><p class="hero-sub">Penghematan belanja, komposisi ASN WFH–WFO, dan kualitas layanan publik (SKM) dari seluruh Perangkat Daerah, periode '+pl(p)+'.</p>')+
+  '</div></header>';
+}
+function foot(){ return '<footer class="wrap">Masuk sebagai <b>'+esc(ST.me.nama)+'</b> ('+esc(ST.me.u)+')'+(CLOUD_URL?'':' &middot; MODE UJI COBA, data hanya di perangkat ini')+' &middot; Grafik dibuat tanpa pustaka pihak ketiga.</footer>'; }
+function dlBanner(p){ const d=DEADLINE[p]; if(!d)return ''; const a=d.split('-'); const t=new Date(+a[0],a[1]-1,+a[2]).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); return '<div class="note-banner"><span>&#9432;</span><span>Batas pengiriman data bulan '+pl(p)+': <b>'+t+'</b>.</span></div>'; }
+
+/* ================= DASHBOARD ================= */
+function dashView(){
+  const p=ST.period, noData=!Object.keys(ST.db[p]||{}).length;
+  return '<div class="wrap"><div class="kpi-row">'+safe('KPI',()=>kpiHtml(p))+'</div></div><main class="wrap">'+dlBanner(p)+
+  (noData?'<div class="note-banner"><span>&#9432;</span><span>Belum ada laporan masuk untuk '+pl(p)+'. Bagian di bawah akan terisi setelah Perangkat Daerah mengirim data.</span></div>':'')+
+  '<section><div class="section-head"><div><p class="section-eyebrow">RINGKASAN KEUANGAN</p><h2 class="section-title">Penghematan per Bulan</h2></div><p class="section-note">Gabungan enam jenis penghematan (listrik, BBM, air, telepon, operasional pegawai, lainnya) dari seluruh PD yang sudah melapor.</p></div><div class="panel chart-grid">'+safe('grafik',()=>sumHtml(p))+'</div></section>'+
+  '<section><div class="section-head"><div><p class="section-eyebrow">RINCIAN KATEGORI</p><h2 class="section-title">Per Kategori &amp; Perangkat Daerah</h2></div><p class="section-note">Pilih kategori untuk melihat tren bulanan dan peringkat Perangkat Daerah.</p></div><div class="panel">'+safe('kategori',()=>catHtml(p))+'</div></section>'+
+  '<section><div class="section-head"><div><p class="section-eyebrow">KOMPOSISI ASN</p><h2 class="section-title">Perbandingan WFH dan WFO</h2></div><p class="section-note">Total persentase dalam satu bulan (bukan per hari), disampaikan oleh BKPP.</p></div><div class="panel">'+safe('WFH',()=>wfhHtml(p))+'</div></section>'+
+  '<section><div class="section-head"><div><p class="section-eyebrow">KUALITAS LAYANAN PUBLIK</p><h2 class="section-title">Hasil Survei Kepuasan Masyarakat (SKM)</h2></div><p class="section-note">Mutu pelayanan mengikuti Permenpan RB No. 14 Tahun 2017.</p></div><div class="panel">'+safe('SKM',()=>skmHtml(p))+'</div></section>'+
+  '<section><div class="section-head"><div><p class="section-eyebrow">KEPATUHAN</p><h2 class="section-title">Status Pelaporan '+pl(p)+'</h2></div></div><div class="panel">'+safe('kepatuhan',()=>kepHtml(p))+'</div></section></main>';
+}
+function kpiHtml(p){
+  const T=tasks(p), done=T.filter(t=>t.r).length, pct=T.length?Math.round(done/T.length*100):0;
+  const incomplete=new Set(T.filter(t=>!t.r).map(t=>t.u.u)).size;
+  const sav=SUM(p,SAVE_KEYS), pp=prevP(p), hasPrev=Object.keys(ST.db[pp]||{}).length>0, psav=SUM(pp,SAVE_KEYS);
+  let sub='Listrik, BBM, air, telepon, operasional, lainnya', cls='';
+  if(hasPrev&&psav>0){ const d=(sav-psav)/psav*100; sub=(d>=0?'&#9650; ':'&#9660; ')+nf(Math.abs(d),1)+'% dibanding '+BLN[+pp.split('-')[1]-1]; cls=d>=0?'good':'bad'; }
+  const w=R(p,'wfh'), ag=skmAgg(p);
+  const c=[
+   {l:'Laporan Masuk',v:done+' / '+T.length,s:pct+'% &middot; '+incomplete+' PD belum lengkap',c:pct===100?'good':''},
+   {l:'Total Penghematan',v:rp(sav,true),s:sub,c:cls},
+   {l:'Komposisi ASN (WFH : WFO)',v:w?nf(w.wfh,1)+'% : '+nf(w.wfo,1)+'%':'&ndash;',s:w?'Data '+pl(p):'Belum ada data bulan ini',c:''},
+   {l:'Indeks Kepuasan (IKM)',v:ag.avg==null?'&ndash;':nf(ag.avg,2),s:ag.avg==null?'Belum ada data bulan ini':mutu(ag.avg)[1]+' &middot; '+th(ag.rs)+' responden',c:''}
+  ];
+  return c.map(x=>'<div class="kpi-card"><p class="kpi-label">'+x.l+'</p><div class="kpi-value">'+x.v+'</div><div class="kpi-sub '+x.c+'">'+x.s+'</div></div>').join('');
+}
+function sumHtml(p){
+  const ms=withData(); if(!ms.length) return '<div class="empty-msg" style="grid-column:1/-1">Belum ada data untuk ditampilkan.</div>';
+  const tot=ms.map(m=>HEMAT.map(f=>SUM(m,[f.k]))), max=Math.max.apply(null,tot.map(a=>a.reduce((x,y)=>x+y,0)).concat([1]));
+  let g=''; for(let i=0;i<=4;i++){ g+='<div class="gridline" style="bottom:'+(i/4*100)+'%"><span>'+rp(max*i/4,true)+'</span></div>'; }
+  const cols=ms.map((m,mi)=>'<div class="bar-col"><div class="bar-total-label">'+rp(tot[mi].reduce((a,b)=>a+b,0),true)+'</div><div class="bar-stack">'+HEMAT.map((f,fi)=>'<div class="bar-seg" title="'+f.s+' - '+pl(m)+': '+rp(tot[mi][fi])+'" style="height:'+(tot[mi][fi]/max*100)+'%;background:'+COLORS[fi]+'"></div>').join('')+'</div><div class="bar-month-label"'+(m===p?' style="color:var(--teal-900);font-weight:800"':'')+'>'+ps(m)+'</div></div>').join('');
+  const vals=HEMAT.map(f=>({f,c:COLORS[HEMAT.indexOf(f)],v:SUM(p,[f.k])})).sort((a,b)=>b.v-a.v), T=vals.reduce((a,x)=>a+x.v,0);
+  let cum=0, st=[]; vals.forEach(x=>{ const s=cum/(T||1)*360; cum+=x.v; st.push(x.c+' '+s+'deg '+(cum/(T||1)*360)+'deg'); });
+  return '<div><div class="barchart"><div class="gridlines">'+g+'</div>'+cols+'</div><div class="chip-legend">'+HEMAT.map((f,i)=>'<span class="chip"><span class="dot" style="background:'+COLORS[i]+'"></span>'+f.i+' '+f.s+'</span>').join('')+'</div></div>'+
+  '<div class="donut-wrap"><div class="donut" style="'+(T?'background:conic-gradient('+st.join(',')+')':'')+'"><div class="donut-hole"><div class="v">'+rp(T,true)+'</div><div class="l">'+ps(p)+'</div></div></div><div class="legend-list">'+vals.map(x=>'<div class="legend-item"><div class="legend-left"><span class="legend-dot" style="background:'+x.c+'"></span><span>'+x.f.i+' '+x.f.s+'</span></div><span class="legend-val">'+(T?nf(x.v/T*100,1)+'%':'0%')+'</span></div>').join('')+'</div></div>';
+}
+function lineChart(vals,labels,color){
+  const w=640,h=200,L=46,Rr=16,Tp=16,B=28,mx=Math.max.apply(null,vals.concat([1])),pw=w-L-Rr,ph=h-Tp-B,n=vals.length;
+  const x=i=>L+(n===1?pw/2:pw*i/(n-1)), y=v=>Tp+ph-(v/mx)*ph, pts=vals.map((v,i)=>[x(i),y(v)]);
+  const line=pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');
+  const area=line+' L'+pts[n-1][0].toFixed(1)+','+(Tp+ph)+' L'+pts[0][0].toFixed(1)+','+(Tp+ph)+' Z';
+  let g=''; for(let i=0;i<=3;i++){ const gy=Tp+ph-i/3*ph; g+='<line x1="'+L+'" y1="'+gy.toFixed(1)+'" x2="'+(w-Rr)+'" y2="'+gy.toFixed(1)+'" stroke="#e3ded0" stroke-dasharray="3,3"/><text x="'+(L-6)+'" y="'+(gy+3).toFixed(1)+'" text-anchor="end" class="lc-label">'+rp(mx*i/3,true)+'</text>'; }
+  return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="xMidYMid meet">'+g+'<path d="'+area+'" fill="'+color+'22"/><path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
+   pts.map((q,i)=>'<circle class="lc-dot" cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="4" stroke="'+color+'"><title>'+labels[i]+': '+rp(vals[i])+'</title></circle><text x="'+q[0].toFixed(1)+'" y="'+(q[1]-10).toFixed(1)+'" text-anchor="middle" class="lc-val" fill="'+color+'">'+rp(vals[i],true)+'</text>').join('')+
+   labels.map((l,i)=>'<text x="'+x(i).toFixed(1)+'" y="'+(h-6)+'" text-anchor="middle" class="lc-label">'+l+'</text>').join('')+'</svg>';
+}
+let CATROWS=[];
+function catHtml(p){
+  const f=FIELDS.find(x=>x.k===ST.cat)||FIELDS[6], ms=withData(), pp=prevP(p), ci=Math.max(0,HEMAT.indexOf(f));
+  CATROWS=keuUsers().map(u=>({u,v:KV(p,u.u,f.k),pv:KV(pp,u.u,f.k),t:ms.reduce((a,m)=>a+(KV(m,u.u,f.k)||0),0)})).sort((a,b)=>(b.v||0)-(a.v||0));
+  const rep=CATROWS.filter(r=>r.v!==null), tot=rep.reduce((a,r)=>a+r.v,0), top=rep.length&&rep[0].v>0?rep[0].u.nama:'–';
+  const tabs=FIELDS.map(x=>'<button type="button" class="tab '+(x.k===f.k?'active':'')+'" onclick="setCat(\''+x.k+'\')">'+x.i+' '+(x.h?'Hemat ':'')+x.s+'</button>').join('');
+  const chart=ms.length?lineChart(ms.map(m=>SUM(m,[f.k])),ms.map(ps),COLORS[ci%6]):'<div class="empty-msg">Belum ada data.</div>';
+  return '<div class="tabs">'+tabs+'</div><div class="cat-summary"><div class="mini-stat"><div class="k">'+f.i+' '+esc(f.t.toUpperCase())+' &middot; '+ps(p).toUpperCase()+'</div><div class="v">'+rp(tot,true)+'</div></div><div class="mini-stat"><div class="k">RATA-RATA PER PD MELAPOR</div><div class="v">'+(rep.length?rp(tot/rep.length,true):'–')+'</div></div><div class="mini-stat"><div class="k">KONTRIBUTOR TERBESAR</div><div class="v" style="font-size:14px;line-height:1.3">'+esc(top)+'</div></div></div>'+
+  '<div class="linechart-wrap">'+chart+'</div><div class="search-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" id="q" placeholder="Cari nama Perangkat Daerah..." value="'+esc(ST.q)+'" oninput="ST.q=this.value;$(\'#catBody\').innerHTML=catRows()"></div>'+
+  '<div class="table-scroll"><table><thead><tr><th style="width:36px"></th><th>Perangkat Daerah</th><th class="num">'+ps(p)+'</th><th class="num">'+ps(pp)+'</th><th class="num">Total semua bulan</th><th class="num">Tren</th></tr></thead><tbody id="catBody">'+catRows()+'</tbody></table></div>';
+}
+function catRows(){
+  const f=FIELDS.find(x=>x.k===ST.cat)||FIELDS[6], q=ST.q.toLowerCase(), rows=CATROWS.filter(r=>r.u.nama.toLowerCase().includes(q));
+  if(!rows.length) return '<tr><td colspan="6" class="empty-msg">Tidak ada Perangkat Daerah yang cocok.</td></tr>';
+  return rows.map((r,i)=>'<tr><td><span class="rank-badge">'+(i+1)+'</span></td><td class="name">'+esc(r.u.nama)+'</td><td class="num">'+(r.v==null?'<span style="color:#9aa8a4">belum lapor</span>':rp(r.v))+'</td><td class="num">'+(r.pv==null?'–':rp(r.pv))+'</td><td class="num" style="font-weight:700">'+rp(r.t)+'</td><td class="num">'+trend(r.v,r.pv,f.g)+'</td></tr>').join('');
+}
+function setCat(k){ ST.cat=k; render(); }
+function wfhHtml(p){
+  const ms=PERIODS.filter(m=>R(m,'wfh')); if(!ms.length) return '<div class="empty-msg">Belum ada data komposisi ASN WFH/WFO.</div>';
+  const cur=R(p,'wfh'), pr=R(prevP(p),'wfh');
+  let ins='';
+  if(cur){ const gap=Math.abs(cur.wfo-cur.wfh); ins='<div class="mini-stat" style="margin-bottom:18px"><div class="k">'+pl(p).toUpperCase()+'</div><div class="v" style="font-size:16px">'+(cur.wfo>=cur.wfh?'WFO':'WFH')+' lebih besar '+nf(gap,1)+' poin persentase'+(pr?' &middot; WFH '+(cur.wfh>=pr.wfh?'naik ':'turun ')+nf(Math.abs(cur.wfh-pr.wfh),1)+' poin dari bulan lalu':'')+'</div></div>'; }
+  const bars=ms.map(m=>{ const r=R(m,'wfh'); return '<div class="wf-row'+(m===p?' sel':'')+'"><div class="l">'+ps(m)+'</div><div class="wf-bar"><i style="width:'+r.wfh+'%;background:var(--teal-500)">'+(r.wfh>=6?nf(r.wfh,1)+'%':'')+'</i><i style="width:'+r.wfo+'%;background:var(--gold)">'+(r.wfo>=6?nf(r.wfo,1)+'%':'')+'</i></div></div>'; }).join('');
+  const rows=ms.map((m,i)=>{ const r=R(m,'wfh'), q=i?R(ms[i-1],'wfh'):null; return '<tr><td class="name">'+pl(m)+'</td><td class="num">'+nf(r.wfh,1)+'%</td><td class="num">'+nf(r.wfo,1)+'%</td><td class="num">'+(q?((r.wfh-q.wfh>=0?'+':'')+nf(r.wfh-q.wfh,1)+' poin'):'–')+'</td></tr>'; }).join('');
+  return ins+'<div class="wf-key"><span><b style="background:var(--teal-500)"></b>WFH</span><span><b style="background:var(--gold)"></b>WFO</span></div>'+bars+'<div class="table-scroll" style="margin-top:14px"><table><thead><tr><th>Bulan</th><th class="num">WFH</th><th class="num">WFO</th><th class="num">Perubahan WFH</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+function skmHtml(p){
+  const us=skmUsers(); if(!us.length) return '<div class="empty-msg">Belum ada unit layanan yang ditugaskan melapor SKM.</div>';
+  const pp=prevP(p), ag=skmAgg(p);
+  const cards=us.map(u=>{ const r=R(p,'skm:'+u.u), q=R(pp,'skm:'+u.u); if(!r) return '<div class="skm-card"><h4>'+esc(u.nama)+'</h4><div class="big" style="color:#9aa8a4">&ndash;</div><div class="meta">Belum melapor</div></div>'; const m=mutu(r.ikm); return '<div class="skm-card"><h4>'+esc(u.nama)+'</h4><div class="big">'+nf(r.ikm,2)+'<span class="mu '+m[0]+'">'+m[0]+' &middot; '+m[1]+'</span></div><div class="meta">'+th(r.resp)+' responden'+(q?' &middot; '+(r.ikm>=q.ikm?'&#9650; ':'&#9660; ')+nf(Math.abs(r.ikm-q.ikm),2)+' poin dari bulan lalu':'')+'</div></div>'; }).join('');
+  const ms=PERIODS.filter(m=>us.some(u=>R(m,'skm:'+u.u)));
+  const matrix=ms.length>1?'<div class="table-scroll" style="margin-top:6px"><table><thead><tr><th>Unit layanan</th>'+ms.map(m=>'<th class="num">'+ps(m)+'</th>').join('')+'</tr></thead><tbody>'+us.map(u=>'<tr><td class="name">'+esc(u.nama)+'</td>'+ms.map(m=>{const r=R(m,'skm:'+u.u);return '<td class="num">'+(r?nf(r.ikm,2):'–')+'</td>';}).join('')+'</tr>').join('')+'</tbody></table></div>':'';
+  return '<div class="skm-grid">'+cards+'</div>'+(ag.avg!=null?'<div class="mini-stat"><div class="k">RATA-RATA TERTIMBANG JUMLAH RESPONDEN &middot; '+ps(p).toUpperCase()+'</div><div class="v">'+nf(ag.avg,2)+' &middot; '+mutu(ag.avg)[1]+' <span style="font-size:13px;font-weight:600;color:var(--ink-soft)">('+th(ag.rs)+' responden)</span></div></div>':'')+matrix+'<p class="hint" style="margin-top:14px">Mutu: A (Sangat Baik) 88,31&ndash;100 &middot; B (Baik) 76,61&ndash;88,30 &middot; C (Kurang Baik) 65,00&ndash;76,60 &middot; D (Tidak Baik) 25,00&ndash;64,99.</p>';
+}
+function kepHtml(p){
+  const T=tasks(p), done=T.filter(t=>t.r).length, pct=T.length?Math.round(done/T.length*100):0, by={};
+  T.forEach(t=>{ (by[t.u.u]=by[t.u.u]||{u:t.u,t:[]}).t.push(t); });
+  const L=Object.values(by).sort((a,b)=>a.t.filter(x=>x.r).length-a.t.length-(b.t.filter(x=>x.r).length-b.t.length)||a.u.nama.localeCompare(b.u.nama));
+  return '<b>'+done+' dari '+T.length+' laporan sudah masuk</b> ('+pct+'%)<div class="progress"><i style="width:'+pct+'%"></i></div><div class="table-scroll"><table><thead><tr><th>Perangkat Daerah</th><th>Status laporan</th></tr></thead><tbody>'+L.map(x=>'<tr><td class="name">'+esc(x.u.nama)+'</td><td>'+x.t.map(t=>'<span class="chip-s '+(t.r?'ok':'no')+'" style="margin:2px 6px 2px 0" title="'+(t.r?'Dikirim '+dt(t.r.at):'Belum dikirim')+'">'+t.l+' '+(t.r?'✓':'✗')+'</span>').join('')+'</td></tr>').join('')+'</tbody></table></div>';
+}
+
+/* ================= FORM ISIAN ================= */
+function inputView(){
+  const me=ST.me, p=ST.period; let t=me, h='<main class="wrap input">';
+  if(me.peran==='admin'){ const l=pdUsers(); t=l.find(x=>x.u===ST.target)||l[0]; ST.target=t.u;
+    h+='<div class="panel form-panel"><label class="f" style="margin-top:0">Isi atas nama</label><select class="t" onchange="ST.target=this.value;ST.pr=null;render()">'+l.map(x=>'<option value="'+x.u+'"'+(x.u===t.u?' selected':'')+'>'+esc(x.nama)+'</option>').join('')+'</select><p class="hint">Mode admin: untuk PD yang mengirim data lewat surat/WhatsApp.</p></div>'; }
+  h+=dlBanner(p);
+  if(!mods(t).length) h+='<div class="panel empty-msg">Akun ini belum memiliki bagian laporan.</div>';
+  if(has(t,'keu')) h+=pnl('Data Keuangan &amp; Penghematan','keu:'+t.u,keuForm(t,p));
+  if(has(t,'skm')) h+=pnl('Hasil SKM (Indeks Kepuasan Masyarakat)','skm:'+t.u,skmForm(t,p));
+  if(has(t,'wfh')) h+=pnl('Komposisi ASN WFH dan WFO','wfh',wfhForm(p));
+  if(has(t,'prog')) h+=pnl('Pemanfaatan Hasil Penghematan untuk Program Prioritas','prog',progForm(p));
+  return h+'</main>';
+}
+function pnl(title,key,body){ const r=R(ST.period,key); return '<section class="panel form-panel"><div class="section-head" style="margin-bottom:6px"><div><p class="section-eyebrow">'+pl(ST.period).toUpperCase()+'</p><h2 class="section-title" style="font-size:18px">'+title+'</h2></div><span class="chip-s '+(r?'ok':'no')+'">'+(r?'Terkirim '+dt(r.at):'Belum dikirim')+'</span></div>'+body+'</section>'; }
+function keuForm(t,p){
+  const r=R(p,'keu:'+t.u), v=(r&&r.v)||{};
+  const grp=(title,fs)=>'<h4 class="fg">'+title+'</h4><div class="form-grid">'+fs.map(f=>'<div><label class="f">'+(f.l?f.l+'. ':'')+f.t+'</label><input class="t rp" inputmode="numeric" data-k="'+f.k+'" placeholder="0" value="'+(r&&v[f.k]!=null?th(v[f.k]):'')+'" oninput="fmtIn(this)"></div>').join('')+'</div>';
+  return '<p class="hint">Isi dalam rupiah. Isi 0 jika tidak ada.</p><div id="f-keu">'+grp('Perjalanan dinas &amp; kendaraan',FIELDS.filter(f=>!f.h))+grp('Penghematan',HEMAT)+'</div><div class="tot"><span>Total penghematan (G&ndash;L)</span><b id="keuTot">Rp 0</b></div><button class="btn full" onclick="saveKeu(\''+t.u+'\')">'+(r?'Perbarui laporan':'Kirim laporan')+'</button>';
+}
+function fmtIn(el){ const d=el.value.replace(/\D/g,''); el.value=d?th(d):''; el.classList.remove('err'); keuTot(); }
+function keuTot(){ let s=0; document.querySelectorAll('#f-keu input[data-k]').forEach(i=>{ if(SAVE_KEYS.includes(i.dataset.k)) s+=num(i.value); }); const e=$('#keuTot'); if(e)e.textContent=rp(s); }
+async function saveKeu(uid){
+  const v={}; let bad=null;
+  document.querySelectorAll('#f-keu input[data-k]').forEach(i=>{ if(i.value.trim()===''){ bad=bad||i; i.classList.add('err'); } else v[i.dataset.k]=num(i.value); });
+  if(bad){ bad.focus(); return toast('Lengkapi semua kolom (isi 0 jika tidak ada)'); }
+  await save('keu:'+uid,{v});
+}
+function skmForm(t,p){ const r=R(p,'skm:'+t.u)||{}; return '<div class="form-grid"><div><label class="f">Nilai IKM (0&ndash;100)</label><input class="t" id="s-ikm" inputmode="decimal" placeholder="mis. 85,40" value="'+(r.ikm!=null?String(r.ikm).replace('.',','):'')+'"></div><div><label class="f">Jumlah responden</label><input class="t" id="s-resp" inputmode="numeric" placeholder="mis. 120" value="'+(r.resp!=null?r.resp:'')+'"></div></div><button class="btn full" onclick="saveSkm(\''+t.u+'\')">'+(r.ikm!=null?'Perbarui laporan':'Kirim laporan')+'</button>'; }
+async function saveSkm(uid){
+  const ikm=dec($('#s-ikm').value), resp=num($('#s-resp').value);
+  if(ikm==null||ikm<0||ikm>100) return toast('Nilai IKM harus 0–100');
+  if(!resp) return toast('Isi jumlah responden');
+  await save('skm:'+uid,{ikm:Math.round(ikm*100)/100,resp});
+}
+function wfhForm(p){ const r=R(p,'wfh')||{}; return '<p class="hint">Isi total persentase dalam satu bulan, bukan per hari. WFO terisi otomatis.</p><div class="form-grid"><div><label class="f">WFH (%)</label><input class="t" id="w-a" inputmode="decimal" value="'+(r.wfh!=null?String(r.wfh).replace('.',','):'')+'" oninput="wfSync()"></div><div><label class="f">WFO (%)</label><input class="t" id="w-b" inputmode="decimal" value="'+(r.wfo!=null?String(r.wfo).replace('.',','):'')+'"></div></div><button class="btn full" onclick="saveWfh()">'+(r.wfh!=null?'Perbarui laporan':'Kirim laporan')+'</button>'; }
+function wfSync(){ const a=dec($('#w-a').value); $('#w-b').value=a==null?'':String(Math.round((100-a)*100)/100).replace('.',','); }
+async function saveWfh(){
+  const a=dec($('#w-a').value), b=dec($('#w-b').value);
+  if(a==null||b==null) return toast('Isi persentase WFH dan WFO');
+  if(a<0||b<0||Math.abs(a+b-100)>0.01) return toast('WFH + WFO harus berjumlah 100%');
+  await save('wfh',{wfh:a,wfo:b});
+}
+function progForm(p){
+  if(!ST.pr){ const r=R(p,'prog'); ST.pr=(r&&r.rows&&r.rows.length)?r.rows.map(x=>({n:x.n,v:x.v})):[{n:'',v:''}]; }
+  const r=R(p,'prog');
+  return '<p class="hint">Isi program/kegiatan/sub kegiatan beserta anggarannya.</p><div id="prRows"></div><button class="btn ghost" onclick="prAdd()">+ Tambah baris</button><div class="tot"><span>Total anggaran</span><b id="prTot">Rp 0</b></div><button class="btn full" onclick="saveProg()">'+(r?'Perbarui laporan':'Kirim laporan')+'</button>';
+}
+function prDraw(){ $('#prRows').innerHTML=ST.pr.map((x,i)=>'<div class="prow"><input class="t" placeholder="Program/Kegiatan/Sub Kegiatan" value="'+esc(x.n)+'" oninput="ST.pr['+i+'].n=this.value"><input class="t" inputmode="numeric" placeholder="Rp" value="'+(x.v===''?'':th(x.v))+'" oninput="prVal('+i+',this)"><button class="x" onclick="prDel('+i+')">×</button></div>').join(''); prTot(); }
+function prVal(i,el){ const d=el.value.replace(/\D/g,''); ST.pr[i].v=d?+d:''; el.value=d?th(d):''; prTot(); }
+function prTot(){ const e=$('#prTot'); if(e)e.textContent=rp(ST.pr.reduce((a,x)=>a+(+x.v||0),0)); }
+function prAdd(){ ST.pr.push({n:'',v:''}); prDraw(); }
+function prDel(i){ ST.pr.splice(i,1); if(!ST.pr.length)ST.pr.push({n:'',v:''}); prDraw(); }
+async function saveProg(){
+  const rows=ST.pr.filter(x=>x.n.trim()||x.v!=='').map(x=>({n:x.n.trim(),v:+x.v||0}));
+  if(!rows.length||rows.some(x=>!x.n)) return toast('Lengkapi nama program/kegiatan pada setiap baris');
+  await save('prog',{rows});
+}
+async function save(key,rec){
+  const p=ST.period, me=ST.me;
+  const tgt=ST.users.find(x=>x.u===ST.target);
+  rec.by=me.peran==='admin'?('Admin (atas nama '+(tgt?tgt.nama:'PD')+')'):me.nama; rec.at=new Date().toISOString();
+  try{
+    const res=await call('save',{period:p,key,rec});
+    if(!res.ok) return toast(res.msg||'Gagal menyimpan');
+    (ST.db[p]=ST.db[p]||{})[key]=rec; ST.pr=null; toast('Laporan tersimpan ✔'); render();
+  }catch(e){ toast('Gagal menyimpan: periksa koneksi internet'); }
+}
+
+/* ================= EKSPOR EXCEL ================= */
+function exportXlsx(){
+  if(typeof XLSX==='undefined') return toast('Pustaka Excel belum termuat (perlu internet)');
+  const p=ST.period, wb=XLSX.utils.book_new(), ku=keuUsers(), ms=withData(), used={};
+  const add=(n,a,w)=>{ n=n.replace(/[\\\/?*\[\]:]/g,'').slice(0,31); let k=n,i=2; while(used[k])k=n.slice(0,28)+' '+(i++); used[k]=1; const ws=XLSX.utils.aoa_to_sheet(a); if(w)ws['!cols']=w.map(x=>({wch:x})); XLSX.utils.book_append_sheet(wb,ws,k); };
+  const wf=R(p,'wfh');
+  add('Status Pelaporan',[['Perangkat Daerah','Laporan','Status','Dikirim']].concat(tasks(p).map(t=>[t.u.nama,t.l,t.r?'Sudah':'Belum',t.r?dt(t.r.at):''])),[55,14,10,20]);
+  add('A Komposisi ASN',[['Bulan','WFH (%)','WFO (%)'],[pl(p),wf?wf.wfh:'',wf?wf.wfo:'']],[16,10,10]);
+  FIELDS.forEach(f=>{ const rows=ku.map((u,i)=>{ const v=KV(p,u.u,f.k); return [i+1,u.nama,v==null?'':v]; }); const tot=ku.reduce((a,u)=>a+(KV(p,u.u,f.k)||0),0); add((f.l||'Perj.Dinas')+' '+f.s,[['No.','Perangkat Daerah',f.h?'Penghematan '+pl(p):f.t+' '+pl(p)]].concat(rows,[['','Total',tot]]),[6,60,24]); });
+  const pr=R(p,'prog'); add('M Pemanfaatan',[['No.','Program/Kegiatan/Sub Kegiatan','Anggaran']].concat(((pr&&pr.rows)||[]).map((x,i)=>[i+1,x.n,x.v]),[['','Total',((pr&&pr.rows)||[]).reduce((a,x)=>a+(+x.v||0),0)]]),[6,60,20]);
+  add('N SKM',[['Unit Layanan','Bulan','Nilai IKM','Jumlah Responden','Mutu']].concat(skmUsers().map(u=>{ const r=R(p,'skm:'+u.u); return [u.nama,pl(p),r?r.ikm:'',r?r.resp:'',r?mutu(r.ikm)[0]+' - '+mutu(r.ikm)[1]:'']; })),[45,16,10,18,20]);
+  add('Rekap Semua PD',[['Perangkat Daerah'].concat(FIELDS.map(f=>(f.l?f.l+'. ':'')+f.s))].concat(ku.map(u=>[u.nama].concat(FIELDS.map(f=>{ const v=KV(p,u.u,f.k); return v==null?'':v; })))),[55].concat(FIELDS.map(()=>18)));
+  add('Tren Bulanan',[['Kategori'].concat(ms.map(pl))].concat(FIELDS.map(f=>[(f.l?f.l+'. ':'')+f.s].concat(ms.map(m=>SUM(m,[f.k]))))),[36].concat(ms.map(()=>18)));
+  XLSX.writeFile(wb,'Rekap_TBK_'+p+'.xlsx');
+}
+
+/* ================= MULAI ================= */
+(async function(){
+  let c=null; try{ c=JSON.parse(localStorage.getItem('tbk_c')||sessionStorage.getItem('tbk_c')||'null'); }catch(e){}
+  if(c&&c.u){ ST.cred=c; try{ const r=await call('all'); if(r.ok){ applyAll(r); const w=withData(); ST.period=w.length?w[w.length-1]:'2026-10'; return render(); } }catch(e){} ST.cred=null; }
+  loginView();
+})();
+</script>
+</body>
+</html>
