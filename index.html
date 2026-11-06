@@ -242,7 +242,7 @@ function local(a,pay){
   if(a==='save'){ if(!canWrite(U,pay.key))return {ok:false,msg:'Tidak berhak mengisi bagian ini'}; (db[pay.period]=db[pay.period]||{})[pay.key]=pay.rec; localStorage.setItem('tbk_demo',JSON.stringify(db)); return {ok:true}; }
   return {ok:false};
 }
-function applyAll(r){ ST.me=r.me; ST.users=(r.users&&r.users.length)?r.users:ROSTER; ST.db=r.db||{}; }
+function applyAll(r){ ST.srv=r.srv||null; ST.me=r.me; ST.users=(r.users&&r.users.length)?r.users:ROSTER; ST.db=r.db||{}; }
 async function reload(){ const r=await call('all'); if(!r.ok)throw new Error(r.msg||'Gagal memuat'); applyAll(r); }
 
 /* ================= LOGIN ================= */
@@ -718,9 +718,16 @@ function setView(){
   const rows=PERIODS.map(p=>{ const c=R(p,'cfg'), d=getDeadline(p)||'', own=!!(c&&c.deadline);
     return '<tr><td class="name">'+pl(p)+'</td><td><input class="t" type="date" id="dl-'+p+'" value="'+d+'" style="min-width:150px"></td><td>'+(own?'<span class="chip-s ok">diatur admin</span>':(DEADLINE[p]?'<span class="trend-chip na">bawaan</span>':'<span style="color:#9aa8a4">belum diatur</span>'))+'</td><td style="white-space:nowrap"><button class="btn ghost" style="padding:8px 12px;font-size:13px" onclick="saveCfg(\''+p+'\')">Simpan</button>'+(own?' <button class="btn ghost" style="padding:8px 12px;font-size:13px;color:var(--bad);border-color:var(--bad)" onclick="putCfg(\''+p+'\',\'\')">Bawaan</button>':'')+'</td></tr>'; }).join('');
   return '<main class="wrap input"><section class="panel form-panel"><div class="section-head" style="margin-bottom:6px"><div><p class="section-eyebrow">PENGATURAN</p><h2 class="section-title" style="font-size:18px">Batas Waktu Pelaporan</h2></div></div><p class="hint">Atur tanggal batas pengiriman untuk tiap bulan. Tanggal ini tampil di halaman PD dan dashboard; laporan yang dikirim setelahnya ditandai terlambat (⏱) pada status pelaporan.</p><div class="table-scroll"><table class="tight"><thead><tr><th>Bulan</th><th>Batas waktu</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></section>'+
+  '<section class="panel form-panel"><div class="section-head" style="margin-bottom:6px"><div><p class="section-eyebrow">PENGATURAN</p><h2 class="section-title" style="font-size:18px">Diagnosa Data</h2></div></div>'+diagHtml()+'</section>'+
   '<section class="panel form-panel"><div class="section-head" style="margin-bottom:6px"><div><p class="section-eyebrow">PENGATURAN</p><h2 class="section-title" style="font-size:18px">Pemeriksaan Akun</h2></div></div>'+
   '<p class="hint">'+pdUsers().length+' akun Perangkat Daerah &middot; '+(CLOUD_URL?'tersambung ke Google Sheets':'mode uji coba (data hanya di perangkat ini)')+'</p>'+
   (bad.length?'<div class="warn"><b>'+bad.length+' akun PD belum memiliki menu Keuangan atau WFH:WFO</b> ('+bad.slice(0,6).map(u=>esc(u.nama)).join(', ')+(bad.length>6?', dll.':'')+'). Biasanya karena sheet &ldquo;Akun&rdquo; masih dari versi lama. Jalankan fungsi <b>perbaruiModulAkun</b> di Apps Script (atau isi kolom modul dengan <b>keu,wfh</b>), lalu klik Muat ulang.</div>':'<div class="warn" style="background:var(--good-bg);border-color:#b8dcc7;color:var(--good)">✓ Semua akun PD sudah memiliki menu Keuangan dan WFH:WFO.</div>')+'</section></main>';
+}
+function diagHtml(){
+  const sv=ST.srv, per=Object.keys(ST.db).sort();
+  const srv=!CLOUD_URL?'Mode uji coba (tidak tersambung ke Google Sheets).':(sv?'Server Apps Script <b>versi '+esc(sv.ver)+'</b> &middot; '+sv.baris+' baris di sheet Data &middot; '+sv.akun+' akun.':'<b style="color:var(--bad)">Server belum versi terbaru</b> (tidak mengirim info versi). Deploy Code.gs: Deploy &gt; Kelola deployment &gt; Edit (ikon pensil) &gt; Versi: <b>Versi baru</b> &gt; Deploy.');
+  const rows=per.map(p=>{ const ks=Object.keys(ST.db[p]).filter(k=>k!=='cfg'), c={}; ks.forEach(k=>{ const t=k.split(':')[0]; c[t]=(c[t]||0)+1; }); return '<tr><td class="name">'+esc(p)+(/^\d{4}-\d{2}$/.test(p)?'':' <b style="color:var(--bad)">(format periode salah &mdash; jalankan rapikanData)</b>')+'</td><td class="num">'+(c.keu||0)+'</td><td class="num">'+(c.wfh||0)+'</td><td class="num">'+(c.skm||0)+'</td><td class="num">'+(c.prog||0)+'</td></tr>'; }).join('');
+  return '<p class="hint">'+srv+'</p><div class="table-scroll"><table class="tight"><thead><tr><th>Periode terbaca dari sheet</th><th class="num">Keuangan</th><th class="num">WFH:WFO</th><th class="num">SKM</th><th class="num">Lamp. M</th></tr></thead><tbody>'+(rows||'<tr><td colspan="5" class="empty-msg">Belum ada data terbaca dari sheet Data.</td></tr>')+'</tbody></table></div>';
 }
 async function putCfg(p,deadline){
   const rec=Object.assign({},R(p,'cfg')||{},{deadline:deadline,by:ST.me.nama,at:new Date().toISOString()});
