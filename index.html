@@ -64,6 +64,8 @@ section{margin-bottom:52px}
 .bar-total-label{position:absolute;bottom:256px;left:50%;transform:translateX(-50%);font-size:10.5px;color:var(--teal-900);font-weight:700;white-space:nowrap}
 table.tight{font-size:12.5px}table.tight thead th,table.tight tbody td{padding:10px 7px}table.tight tbody td.name{min-width:150px;max-width:190px}
 .jump{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 30px}.jump a{border:1px solid var(--line);background:#fff;padding:8px 15px;border-radius:100px;font:600 12.5px Manrope,sans-serif;color:var(--teal-800);text-decoration:none}.jump a:hover{border-color:var(--teal-500);background:var(--teal-100)}
+@media print{body.lapmode header.top,body.lapmode .lapbar,body.lapmode details.lapform,body.lapmode footer,body.lapmode .note-banner,body.lapmode #toast{display:none!important}body.lapmode .paper{overflow:visible!important;box-shadow:none!important;padding:0!important;max-width:none!important;margin:0!important;border:0!important}body.lapmode main.wrap{padding:0!important;max-width:none!important}body.lapmode{background:#fff!important}@page{size:A4;margin:16mm 15mm}}
+.lapbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.lapform table td{vertical-align:top}.lapform .t{padding:8px 10px;font-size:13.5px}.paper{background:#fff;max-width:830px;margin:0 auto 30px;padding:46px 56px;border:1px solid var(--line);box-shadow:0 8px 30px rgba(19,74,68,.08)}@media (max-width:820px){.paper{padding:20px 14px;overflow-x:auto}}
 html{scroll-behavior:smooth}section[id]{scroll-margin-top:16px}
 @media (max-width:820px){.barchart.many .bar-total-label{display:none}.barchart.many .bar-month-label{font-size:8px}}
 .baseline-line{position:absolute;left:0;right:0;border-top:2px dashed var(--gold);z-index:2}.baseline-label{position:absolute;right:0;top:-18px;font-size:10.5px;font-weight:700;color:var(--gold);background:var(--paper-card);padding:1px 6px;border-radius:4px;white-space:nowrap}
@@ -171,7 +173,7 @@ const FIELDS = [
 const HEMAT = FIELDS.filter(f=>f.h), SAVE_KEYS = HEMAT.map(f=>f.k);
 // Realisasi belanja bulan berjalan (menyambung rekap Excel Maret-...); perjalanan dinas memakai field 'pd'
 const RB = [{k:'rb',t:'BBM'},{k:'ra',t:'Air'},{k:'rg',t:'Gas'},{k:'rl',t:'Listrik'},{k:'rk',t:'Operasional kendaraan dinas'}];
-const ALLK = FIELDS.map(f=>f.k).concat(RB.map(f=>f.k));
+const RBK = ['pd'].concat(RB.map(f=>f.k)), ALLK = RBK;   // PD hanya mengisi realisasi belanja; pembatasan & penghematan diisi Bagian Organisasi
 const HAPP = {BBM:'rb',AIR:'ra',GAS:'rg',LISTRIK:'rl',KEND:'rk',SPPD:'pd'};
 const COLORS = ['#1b5e56','#c08a2e','#3d7a8f','#7a5c3d','#5e7a3d','#8f4b3d'];
 const BLN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -204,6 +206,7 @@ const KV = (p,u,f) => { const r=R(p,'keu:'+u); return r&&r.v&&r.v[f]!=null ? (+r
 const SUM = (p,fs) => keuUsers().reduce((a,u)=>a+fs.reduce((b,f)=>b+(KV(p,u.u,f)||0),0),0);
 const withData = () => PERIODS.filter(p=>Object.keys(ST.db[p]||{}).some(k=>k!=='cfg'));
 const canInput = u => !!u && (u.peran==='admin' || (u.peran==='pd' && mods(u).length>0));
+const canLap = u => !!u&&(u.peran==='admin'||u.peran==='viewer');
 function canWrite(u,key){ if(u.peran==='admin')return true; if(key==='prog')return has(u,'prog'); const m=/^(keu|skm|wfh):(.+)$/.exec(key); return !!m&&m[2]===u.u&&has(u,m[1]); }
 function tasks(p){ const t=[]; pdUsers().forEach(u=>{ if(has(u,'keu'))t.push({u,k:'keu:'+u.u,l:'Keuangan'}); if(has(u,'skm'))t.push({u,k:'skm:'+u.u,l:'SKM'}); if(has(u,'wfh'))t.push({u,k:'wfh:'+u.u,l:'WFH/WFO'}); if(has(u,'prog'))t.push({u,k:'prog',l:'Pemanfaatan'}); }); return t.map(x=>{ let r=R(p,x.k), part=false; if(r&&x.k.indexOf('keu:')===0&&!ALLK.every(k=>r.v&&r.v[k]!=null)){ part=true; r=null; } return Object.assign({},x,{r,part}); }); }
 const wfhUsers = () => pdUsers().filter(u=>has(u,'wfh'));
@@ -266,7 +269,7 @@ async function doLogin(){
   }catch(e){ ST.cred=null; b.disabled=false; b.textContent='Masuk'; toast('Tidak dapat terhubung ke server'); }
 }
 function logout(){ try{localStorage.removeItem('tbk_c');sessionStorage.removeItem('tbk_c');}catch(e){} ST.me=null; ST.cred=null; ST.pr=null; loginView(); }
-async function go(v){ ST.view=v; ST.pr=null; if(v==='input')ST.itab=null; if(v==='dash'||v==='set'){ try{await reload();}catch(e){} } render(); }
+async function go(v){ ST.view=v; ST.pr=null; if(v==='input')ST.itab=null; if(v==='lap')ST.lapd=null; if(v==='dash'||v==='set'||v==='lap'){ try{await reload();}catch(e){} } render(); }
 function setPeriod(p){ ST.period=p; ST.pr=null; render(); }
 async function refresh(){ try{ await reload(); render(); toast('Data dimuat ulang'); }catch(e){ toast(e.message); } }
 
@@ -274,20 +277,20 @@ async function refresh(){ try{ await reload(); render(); toast('Data dimuat ulan
 function render(){
   if(!ST.me){ loginView(); return; }
   const y=window.scrollY;
-  const v=ST.view; $('#root').innerHTML = v==='input'&&canInput(ST.me) ? head(true)+inputView()+foot() : (v==='set'&&ST.me.peran==='admin' ? head(true)+setView()+foot() : head(false)+dashView()+foot());
+  const v=ST.view; document.body.classList.toggle('lapmode',v==='lap'&&canLap(ST.me)); $('#root').innerHTML = v==='lap'&&canLap(ST.me) ? head(true)+lapView()+foot() :  v==='input'&&canInput(ST.me) ? head(true)+inputView()+foot() : (v==='set'&&ST.me.peran==='admin' ? head(true)+setView()+foot() : head(false)+dashView()+foot());
   if($('#keuTot')) keuTot();
   if($('#prRows')) prDraw();
   window.scrollTo(0,y);
 }
 function head(slim){
-  const me=ST.me, p=ST.period, isIn=ST.view==='input'&&canInput(me), isS=ST.view==='set'&&me.peran==='admin';
+  const me=ST.me, p=ST.period, isIn=ST.view==='input'&&canInput(me), isS=ST.view==='set'&&me.peran==='admin', isL=ST.view==='lap'&&canLap(me);
   const stat = me.peran!=='pd' ? '<button class="pill-btn" onclick="exportXlsx()">⬇ Excel</button><button class="pill-btn" onclick="window.print()">🖨 Cetak</button>' : '';
-  const hero = isIn ? '<h1 class="hero-title">Isi Laporan Bulanan</h1><p class="hero-sub">Data bulan '+pl(p)+'. Laporan dapat diperbarui kapan saja sebelum batas waktu.</p>'
+  const hero = isL ? '<h1 class="hero-title">Laporan ke Provinsi / Kemendagri</h1><p class="hero-sub">Dokumen Laporan Pelaksanaan Transformasi Budaya Kerja periode '+pl(p)+', terisi otomatis dari data PD. Siap dicetak, diunduh ke Word atau Excel.</p>' : isIn ? '<h1 class="hero-title">Isi Laporan Bulanan</h1><p class="hero-sub">Data bulan '+pl(p)+'. Laporan dapat diperbarui kapan saja sebelum batas waktu.</p>'
    : isS ? '<h1 class="hero-title">Pengaturan</h1><p class="hero-sub">Atur batas waktu pelaporan per bulan dan periksa kelengkapan akun Perangkat Daerah.</p>'
    : '<h1 class="hero-title">Pelaporan Transformasi Budaya Kerja</h1><p class="hero-sub">Realisasi belanja sejak Maret, penghematan, komposisi ASN WFH–WFO, dan kualitas layanan publik (SKM) dari seluruh Perangkat Daerah, periode '+pl(p)+'.</p>';
   return '<header class="top '+(slim?'slim':'')+'"><div class="wrap"><div class="top-row"><div class="brand"><div class="brand-mark">IH</div><div class="brand-text"><strong>Sekretariat Daerah</strong>Pemerintah Kabupaten Indragiri Hulu</div></div>'+
   '<div class="top-actions">'+(isS?'':'<label class="period-pill">Periode&nbsp;<select onchange="setPeriod(this.value)">'+PERIODS.map(x=>'<option value="'+x+'"'+(x===p?' selected':'')+'>'+pl(x)+'</option>').join('')+'</select></label>')+'<button class="pill-btn" onclick="logout()">Keluar</button></div></div>'+
-  '<nav class="nav"><button class="nb '+(!isIn&&!isS?'on':'')+'" onclick="go(\'dash\')">Dashboard</button>'+(canInput(me)?'<button class="nb '+(isIn?'on':'')+'" onclick="go(\'input\')">Isi Laporan</button>':'')+(me.peran==='admin'?'<button class="nb '+(isS?'on':'')+'" onclick="go(\'set\')">Pengaturan</button>':'')+'<span class="sp"></span>'+(isIn||isS?'':'<button class="pill-btn" onclick="refresh()">⟳ Muat ulang</button>'+stat)+'</nav>'+hero+'</div></header>';
+  '<nav class="nav"><button class="nb '+(!isIn&&!isS&&!isL?'on':'')+'" onclick="go(\'dash\')">Dashboard</button>'+(canInput(me)?'<button class="nb '+(isIn?'on':'')+'" onclick="go(\'input\')">Isi Laporan</button>':'')+(canLap(me)?'<button class="nb '+(isL?'on':'')+'" onclick="go(\'lap\')">Laporan Provinsi</button>':'')+(me.peran==='admin'?'<button class="nb '+(isS?'on':'')+'" onclick="go(\'set\')">Pengaturan</button>':'')+'<span class="sp"></span>'+(isIn||isS||isL?'':'<button class="pill-btn" onclick="refresh()">⟳ Muat ulang</button>'+stat)+'</nav>'+hero+'</div></header>';
 }
 function foot(){ return '<footer class="wrap">Masuk sebagai <b>'+esc(ST.me.nama)+'</b> ('+esc(ST.me.u)+')'+(CLOUD_URL?'':' &middot; MODE UJI COBA, data hanya di perangkat ini')+' &middot; Grafik dibuat tanpa pustaka pihak ketiga.</footer>'; }
 function getDeadline(p){ const c=R(p,'cfg'); return (c&&c.deadline)||DEADLINE[p]||null; }
@@ -303,13 +306,12 @@ function dlBanner(p){
 /* ================= DASHBOARD ================= */
 function dashView(){
   const p=ST.period, noData=!Object.keys(ST.db[p]||{}).some(k=>k!=='cfg');
-  const links=(HIST?[['sec-rb','Realisasi Belanja']]:[]).concat([['sec-hm','Penghematan'],['sec-wfh','WFH : WFO'],['sec-skm','SKM'],['sec-kep','Kepatuhan']]);
+  const links=(HIST?[['sec-rb','Realisasi Belanja']]:[]).concat([['sec-hm','Rekap & Penghematan'],['sec-wfh','WFH : WFO'],['sec-skm','SKM'],['sec-kep','Kepatuhan']]);
   const jump='<div class="jump">'+links.map(x=>'<a href="#'+x[0]+'" onclick="document.getElementById(\''+x[0]+'\').scrollIntoView({behavior:\'smooth\'});return false">'+x[1]+'</a>').join('')+'</div>';
   return '<div class="wrap"><div class="kpi-row">'+safe('KPI',()=>kpiHtml(p))+'</div></div><main class="wrap">'+dlBanner(p)+
   (noData?'<div class="note-banner"><span>&#9432;</span><span>Belum ada laporan masuk untuk '+pl(p)+'. Bagian di bawah akan terisi setelah Perangkat Daerah mengirim data.</span></div>':'')+jump+
   safe('realisasi',realisasiHtml)+
-  '<section id="sec-hm"><div class="section-head"><div><p class="section-eyebrow">PENGHEMATAN (LAMPIRAN G&ndash;L)</p><h2 class="section-title">Penghematan per Bulan</h2></div><p class="section-note">Gabungan enam jenis penghematan (listrik, BBM, air, telepon, operasional pegawai, lainnya) dari seluruh PD yang sudah melapor.</p></div><div class="panel chart-grid">'+safe('grafik',()=>sumHtml(p))+'</div></section>'+
-  '<section><div class="section-head"><div><p class="section-eyebrow">RINCIAN LAMPIRAN</p><h2 class="section-title">Per Kategori &amp; Perangkat Daerah</h2></div><p class="section-note">Pilih kategori untuk melihat tren bulanan dan peringkat Perangkat Daerah.</p></div><div class="panel">'+safe('kategori',()=>catHtml(p))+'</div></section>'+
+  '<section id="sec-hm"><div class="section-head"><div><p class="section-eyebrow">REKAP KESELURUHAN</p><h2 class="section-title">Realisasi Belanja &amp; Penghematan</h2></div><p class="section-note">Gabungan seluruh PD, format seperti data pendukung dari BPKAD. Penghematan = realisasi Maret dikurangi realisasi bulan '+pl(p)+'.</p></div><div class="panel">'+safe('rekap',()=>rekapHtml(p))+'</div></section>'+
   '<section id="sec-wfh"><div class="section-head"><div><p class="section-eyebrow">KOMPOSISI ASN</p><h2 class="section-title">Perbandingan WFH dan WFO</h2></div><p class="section-note">Total persentase dalam satu bulan (bukan per hari), diisi oleh masing-masing PD untuk pegawainya.</p></div><div class="panel">'+safe('WFH',()=>wfhHtml(p))+'</div></section>'+
   '<section id="sec-skm"><div class="section-head"><div><p class="section-eyebrow">KUALITAS LAYANAN PUBLIK</p><h2 class="section-title">Hasil Survei Kepuasan Masyarakat (SKM)</h2></div><p class="section-note">Mutu pelayanan mengikuti Permenpan RB No. 14 Tahun 2017.</p></div><div class="panel">'+safe('SKM',()=>skmHtml(p))+'</div></section>'+
   '<section id="sec-kep"><div class="section-head"><div><p class="section-eyebrow">KEPATUHAN</p><h2 class="section-title">Status Pelaporan '+pl(p)+'</h2></div></div><div class="panel">'+safe('kepatuhan',()=>kepHtml(p))+'</div></section></main>';
@@ -317,27 +319,16 @@ function dashView(){
 function kpiHtml(p){
   const T=tasks(p), done=T.filter(t=>t.r).length, pct=T.length?Math.round(done/T.length*100):0;
   const incomplete=new Set(T.filter(t=>!t.r).map(t=>t.u.u)).size;
-  const sav=SUM(p,SAVE_KEYS), pp=prevP(p), hasPrev=Object.keys(ST.db[pp]||{}).length>0, psav=SUM(pp,SAVE_KEYS);
-  let sub='Listrik, BBM, air, telepon, operasional, lainnya', cls='';
-  if(hasPrev&&psav>0){ const d=(sav-psav)/psav*100; sub=(d>=0?'&#9650; ':'&#9660; ')+nf(Math.abs(d),1)+'% dibanding '+BLN[+pp.split('-')[1]-1]; cls=d>=0?'good':'bad'; }
+  let sav=0, sub='Belum ada data realisasi bulan ini', cls='';
+  if(HIST){ hInit(); const rk=rekapData(UM.indexOf(p)>0?UM.indexOf(p):-1); if(rk){ sav=rk.tot.h; sub=(sav>=0?'Lebih hemat ':'Naik ')+nf(Math.abs(rk.tot.pct||0),1)+'% dibanding Maret'+(rk.part?' (sementara)':''); cls=sav>=0?'good':'bad'; } }
   const w=wfhAgg(p), ag=skmAgg(p);
   const c=[
    {l:'Laporan Masuk',v:done+' / '+T.length,s:pct+'% &middot; '+incomplete+' PD belum lengkap',c:pct===100?'good':''},
-   {l:'Total Penghematan',v:rp(sav,true),s:sub,c:cls},
+   {l:'Penghematan vs Maret',v:sav<0?'-'+rp(-sav,true):rp(sav,true),s:sub,c:cls},
    {l:'Komposisi ASN (WFH : WFO)',v:w?nf(w.wfh,1)+'% : '+nf(w.wfo,1)+'%':'&ndash;',s:w?'Rata-rata '+w.n+' PD &middot; '+pl(p):'Belum ada data bulan ini',c:''},
    {l:'Indeks Kepuasan (IKM)',v:ag.avg==null?'&ndash;':nf(ag.avg,2),s:ag.avg==null?'Belum ada data bulan ini':mutu(ag.avg)[1]+' &middot; '+th(ag.rs)+' responden',c:''}
   ];
   return c.map(x=>'<div class="kpi-card"><p class="kpi-label">'+x.l+'</p><div class="kpi-value">'+x.v+'</div><div class="kpi-sub '+x.c+'">'+x.s+'</div></div>').join('');
-}
-function sumHtml(p){
-  const ms=withData(); if(!ms.length) return '<div class="empty-msg" style="grid-column:1/-1">Belum ada data untuk ditampilkan.</div>';
-  const tot=ms.map(m=>HEMAT.map(f=>SUM(m,[f.k]))), max=Math.max.apply(null,tot.map(a=>a.reduce((x,y)=>x+y,0)).concat([1]));
-  let g=''; for(let i=0;i<=4;i++){ g+='<div class="gridline" style="bottom:'+(i/4*100)+'%"><span>'+rp(max*i/4,true)+'</span></div>'; }
-  const cols=ms.map((m,mi)=>'<div class="bar-col"><div class="bar-total-label">'+rp(tot[mi].reduce((a,b)=>a+b,0),true)+'</div><div class="bar-stack">'+HEMAT.map((f,fi)=>'<div class="bar-seg" title="'+f.s+' - '+pl(m)+': '+rp(tot[mi][fi])+'" style="height:'+(tot[mi][fi]/max*100)+'%;background:'+COLORS[fi]+'"></div>').join('')+'</div><div class="bar-month-label"'+(m===p?' style="color:var(--teal-900);font-weight:800"':'')+'>'+ps(m)+'</div></div>').join('');
-  const vals=HEMAT.map(f=>({f,c:COLORS[HEMAT.indexOf(f)],v:SUM(p,[f.k])})).sort((a,b)=>b.v-a.v), T=vals.reduce((a,x)=>a+x.v,0);
-  let cum=0, st=[]; vals.forEach(x=>{ const s=cum/(T||1)*360; cum+=x.v; st.push(x.c+' '+s+'deg '+(cum/(T||1)*360)+'deg'); });
-  return '<div><div class="barchart"><div class="gridlines">'+g+'</div>'+cols+'</div><div class="chip-legend">'+HEMAT.map((f,i)=>'<span class="chip"><span class="dot" style="background:'+COLORS[i]+'"></span>'+f.i+' '+f.s+'</span>').join('')+'</div></div>'+
-  '<div class="donut-wrap"><div class="donut" style="'+(T?'background:conic-gradient('+st.join(',')+')':'')+'"><div class="donut-hole"><div class="v">'+rp(T,true)+'</div><div class="l">'+ps(p)+'</div></div></div><div class="legend-list">'+vals.map(x=>'<div class="legend-item"><div class="legend-left"><span class="legend-dot" style="background:'+x.c+'"></span><span>'+x.f.i+' '+x.f.s+'</span></div><span class="legend-val">'+(T?nf(x.v/T*100,1)+'%':'0%')+'</span></div>').join('')+'</div></div>';
 }
 function lineChart(vals,labels,color){
   const w=640,h=200,L=46,Rr=16,Tp=16,B=28,mx=Math.max.apply(null,vals.concat([1])),pw=w-L-Rr,ph=h-Tp-B,n=vals.length;
@@ -349,23 +340,6 @@ function lineChart(vals,labels,color){
    pts.map((q,i)=>'<circle class="lc-dot" cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="4" stroke="'+color+'"><title>'+labels[i]+': '+rp(vals[i])+'</title></circle><text x="'+q[0].toFixed(1)+'" y="'+(q[1]-10).toFixed(1)+'" text-anchor="middle" class="lc-val" fill="'+color+'">'+rp(vals[i],true)+'</text>').join('')+
    labels.map((l,i)=>'<text x="'+x(i).toFixed(1)+'" y="'+(h-6)+'" text-anchor="middle" class="lc-label">'+l+'</text>').join('')+'</svg>';
 }
-let CATROWS=[];
-function catHtml(p){
-  const f=FIELDS.find(x=>x.k===ST.cat)||FIELDS[6], ms=withData(), pp=prevP(p), ci=Math.max(0,HEMAT.indexOf(f));
-  CATROWS=keuUsers().map(u=>({u,v:KV(p,u.u,f.k),pv:KV(pp,u.u,f.k),t:ms.reduce((a,m)=>a+(KV(m,u.u,f.k)||0),0)})).sort((a,b)=>(b.v||0)-(a.v||0));
-  const rep=CATROWS.filter(r=>r.v!==null), tot=rep.reduce((a,r)=>a+r.v,0), top=rep.length&&rep[0].v>0?rep[0].u.nama:'–';
-  const tabs=FIELDS.map(x=>'<button type="button" class="tab '+(x.k===f.k?'active':'')+'" onclick="setCat(\''+x.k+'\')">'+x.i+' '+(x.h?'Hemat ':'')+x.s+'</button>').join('');
-  const chart=ms.length?lineChart(ms.map(m=>SUM(m,[f.k])),ms.map(ps),COLORS[ci%6]):'<div class="empty-msg">Belum ada data.</div>';
-  return '<div class="tabs">'+tabs+'</div><div class="cat-summary"><div class="mini-stat"><div class="k">'+f.i+' '+esc(f.t.toUpperCase())+' &middot; '+ps(p).toUpperCase()+'</div><div class="v">'+rp(tot,true)+'</div></div><div class="mini-stat"><div class="k">RATA-RATA PER PD MELAPOR</div><div class="v">'+(rep.length?rp(tot/rep.length,true):'–')+'</div></div><div class="mini-stat"><div class="k">KONTRIBUTOR TERBESAR</div><div class="v" style="font-size:14px;line-height:1.3">'+esc(top)+'</div></div></div>'+
-  '<div class="linechart-wrap">'+chart+'</div><div class="search-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" id="q" placeholder="Cari nama Perangkat Daerah..." value="'+esc(ST.q)+'" oninput="ST.q=this.value;$(\'#catBody\').innerHTML=catRows()"></div>'+
-  '<div class="table-scroll"><table><thead><tr><th style="width:36px"></th><th>Perangkat Daerah</th><th class="num">'+ps(p)+'</th><th class="num">'+ps(pp)+'</th><th class="num">Total semua bulan</th><th class="num">Tren</th></tr></thead><tbody id="catBody">'+catRows()+'</tbody></table></div>';
-}
-function catRows(){
-  const f=FIELDS.find(x=>x.k===ST.cat)||FIELDS[6], q=ST.q.toLowerCase(), rows=CATROWS.filter(r=>r.u.nama.toLowerCase().includes(q));
-  if(!rows.length) return '<tr><td colspan="6" class="empty-msg">Tidak ada Perangkat Daerah yang cocok.</td></tr>';
-  return rows.map((r,i)=>'<tr><td><span class="rank-badge">'+(i+1)+'</span></td><td class="name">'+esc(r.u.nama)+'</td><td class="num">'+(r.v==null?'<span style="color:#9aa8a4">belum lapor</span>':rp(r.v))+'</td><td class="num">'+(r.pv==null?'–':rp(r.pv))+'</td><td class="num" style="font-weight:700">'+rp(r.t)+'</td><td class="num">'+trend(r.v,r.pv,f.g)+'</td></tr>').join('');
-}
-function setCat(k){ ST.cat=k; render(); }
 function wfhHtml(p){
   const ms=PERIODS.filter(m=>wfhAgg(m)); if(!ms.length) return '<div class="empty-msg">Belum ada data komposisi ASN WFH/WFO.</div>';
   const cur=wfhAgg(p), pr=wfhAgg(prevP(p)), all=wfhUsers().length;
@@ -418,6 +392,25 @@ const hMon=()=>UM.map((m,i)=>i);
 const hDone=()=>hMon().filter(i=>hCov(i)>=HMIN);      // bulan yang datanya hampir lengkap
 const hPart=i=>hCov(i)<HMIN;                          // bulan sementara
 const hLbl=i=>ps(UM[i])+(hPart(i)?'*':''), hFull=i=>pl(UM[i]);
+const HORD=['BBM','AIR','GAS','LISTRIK','KEND','SPPD'], HNM={BBM:'BELANJA BBM',AIR:'BELANJA AIR',GAS:'BELANJA GAS',LISTRIK:'BELANJA LISTRIK',KEND:'BELANJA OPERASIONAL KENDARAAN DINAS',SPPD:'BELANJA EFISIENSI SPPD'};
+const hAgg=(k,m)=>HIST.pd.reduce((s,u)=>s+(hvm(k,u,m)||0),0);
+const negF=n=>{ n=Math.round(+n||0); return n<0?'('+th(-n)+')':th(n); };
+// ci = indeks bulan pembanding pada UM (-1 = bulan terakhir). Penghematan = realisasi Maret - realisasi bulan ci
+function rekapData(ci){
+  if(!HIST||UM.length<2) return null; if(ci<0||ci>=UM.length) ci=UM.length-1; if(ci<1) return null;
+  const ms=UM.map((m,i)=>i), mk=(k,l)=>{ const vals=ms.map(i=>hSum(k,i)), b=vals[0], c=vals[ci], h=b-c; return {k,l,vals,h,pct:b>0?h/b*100:null}; };
+  const rows=HORD.map(k=>mk(k,HNM[k])), vals=ms.map(i=>rows.reduce((s,r)=>s+r.vals[i],0)), b=vals[0], h=b-vals[ci];
+  return {ci,ms,rows,tot:{l:'TOTAL',vals,h,pct:b>0?h/b*100:null},part:hPart(ci)};
+}
+function rekapTable(rk,cls,long){
+  const hd=i=>long?BLN[+UM[i].split('-')[1]-1]:hLbl(i), cell=v=>'<td class="num" style="text-align:right">'+th(v)+'</td>';
+  const row=(r,bold)=>'<tr'+(bold?' style="font-weight:700"':'')+'><td class="n">'+(r.no||'')+'</td><td>'+esc(r.l)+'</td>'+r.vals.map(cell).join('')+'<td class="num" style="text-align:right;'+(r.h<0?'color:#b42318':'')+'">'+negF(r.h)+'</td><td class="num" style="text-align:right">'+(r.pct==null?'-':nf(r.pct,2))+'</td></tr>';
+  return '<table class="'+cls+'"><thead><tr><th rowspan="2" style="width:36px">No.</th><th rowspan="2">Uraian</th><th colspan="'+rk.ms.length+'">Realisasi Belanja</th><th rowspan="2">Penghematan<br>('+esc(hd(0))+' &minus; '+esc(hd(rk.ci))+')</th><th rowspan="2">%</th></tr><tr>'+rk.ms.map(i=>'<th>'+esc(hd(i))+'</th>').join('')+'</tr></thead><tbody>'+rk.rows.map((r,n)=>row(Object.assign({no:n+1},r))).join('')+row(rk.tot,1)+'</tbody></table>';
+}
+function rekapHtml(p){
+  hInit(); const rk=rekapData(UM.indexOf(p)>0?UM.indexOf(p):-1); if(!rk) return '<div class="empty-msg">Rekap tampil setelah ada data realisasi bulan setelah Maret.</div>';
+  return '<div class="table-scroll">'+rekapTable(rk,'tight',false)+'</div><p class="hint" style="margin-top:12px">Angka dalam kurung dan merah berarti belanja bulan ini lebih besar dari Maret (tidak ada penghematan).'+(rk.part?' Bulan ini masih sementara karena belum semua PD mengisi.':'')+' Belanja yang belum diisi PD dihitung Rp 0.</p>';
+}
 function histRange(){ return hFull(0)+' – '+hFull(UM.length-1); }
 function realisasiHtml(){
   hInit(); if(!HIST||!UM.length) return '';
@@ -498,17 +491,12 @@ function pnl(title,key,body){ const r=R(ST.period,key), chip='<span class="chip-
   return '<section class="panel form-panel"><div class="section-head" style="margin-bottom:6px"><div><p class="section-eyebrow">'+pl(ST.period).toUpperCase()+'</p><h2 class="section-title" style="font-size:18px">'+title+'</h2></div>'+chip+'</div>'+body+'</section>'; }
 function keuForm(t,p){
   const r=R(p,'keu:'+t.u), v=(r&&r.v)||{};
-  const inp=f=>'<div><label class="f">'+(f.l?f.l+'. ':'')+f.t+'</label><input class="t rp" inputmode="numeric" data-k="'+f.k+'" placeholder="0" value="'+(r&&v[f.k]!=null?th(v[f.k]):'')+'" oninput="fmtIn(this)"></div>';
-  const grp=(title,hint,fs)=>'<h4 class="fg">'+title+'</h4>'+(hint?'<p class="hint" style="margin:0 0 4px">'+hint+'</p>':'')+'<div class="form-grid">'+fs.map(inp).join('')+'</div>';
-  const real=[{k:'pd',t:'Perjalanan dinas (SPPD)'}].concat(RB);
-  return '<p class="hint">Isi dalam rupiah. Isi 0 jika tidak ada.</p><div id="f-keu">'+
-    grp('1. Realisasi belanja bulan ini','Belanja yang benar-benar terpakai pada bulan ini (sama seperti rekap Excel realisasi belanja). Data ini menyambung tren Maret sampai bulan terbaru di dashboard.',real)+
-    grp('2. Pembatasan &amp; peningkatan (Lampiran B&ndash;F)','',FIELDS.filter(f=>!f.h&&f.k!=='pd'))+
-    grp('3. Penghematan (Lampiran G&ndash;L)','',HEMAT)+
-    '</div><div class="tot"><span>Total penghematan (G&ndash;L)</span><b id="keuTot">Rp 0</b></div><button class="btn full" onclick="saveKeu(\''+t.u+'\')">'+(r?'Perbarui laporan':'Kirim laporan')+'</button>';
+  const inp=f=>'<div><label class="f">'+f.t+'</label><input class="t rp" inputmode="numeric" data-k="'+f.k+'" placeholder="0" value="'+(r&&v[f.k]!=null?th(v[f.k]):'')+'" oninput="fmtIn(this)"></div>';
+  const real=[{k:'pd',t:'Perjalanan dinas (SPPD)'}].concat(RB.map(f=>({k:f.k,t:f.t==='Operasional kendaraan dinas'?f.t:'Belanja '+f.t})));
+  return '<p class="hint">Isi realisasi belanja bulan ini dalam rupiah (sama seperti rekap realisasi belanja yang biasa dikirim). Isi 0 jika tidak ada. Data pembatasan dan penghematan dihitung dan diisi oleh Bagian Organisasi.</p><div id="f-keu"><div class="form-grid">'+real.map(inp).join('')+'</div></div><div class="tot"><span>Total realisasi belanja</span><b id="keuTot">Rp 0</b></div><button class="btn full" onclick="saveKeu(\''+t.u+'\')">'+(r?'Perbarui laporan':'Kirim laporan')+'</button>';
 }
 function fmtIn(el){ const d=el.value.replace(/\D/g,''); el.value=d?th(d):''; el.classList.remove('err'); keuTot(); }
-function keuTot(){ let s=0; document.querySelectorAll('#f-keu input[data-k]').forEach(i=>{ if(SAVE_KEYS.includes(i.dataset.k)) s+=num(i.value); }); const e=$('#keuTot'); if(e)e.textContent=rp(s); }
+function keuTot(){ let s=0; document.querySelectorAll('#f-keu input[data-k]').forEach(i=>{ s+=num(i.value); }); const e=$('#keuTot'); if(e)e.textContent=rp(s); }
 async function saveKeu(uid){
   const v={}; let bad=null;
   document.querySelectorAll('#f-keu input[data-k]').forEach(i=>{ if(i.value.trim()===''){ bad=bad||i; i.classList.add('err'); } else v[i.dataset.k]=num(i.value); });
@@ -556,6 +544,174 @@ async function save(key,rec){
   }catch(e){ toast('Gagal menyimpan: periksa koneksi internet'); }
 }
 
+/* ================= LAPORAN PROVINSI / KEMENDAGRI ================= */
+const YT=['Ya','Tidak'], SB=['Sudah','Belum'], DL=['Dilaksanakan','Belum dilaksanakan'];
+const SEBUP='SE Bupati Indragiri Hulu No.6 Tahun 2026', DLA='Dokumen Laporan Anggaran';
+// [jenis, id, aspek, pilihan/kunci, bawaan, bukti]
+const LAP = [
+ ['sec','1','Penyesuaian Tugas Kedinasan'],
+ ['opt','1a','Penerapan WFO dan WFH',DL,0,SEBUP],
+ ['hari','1b','Pola WFH (1 hari kerja/minggu)'],
+ ['wfh','1c','Komposisi ASN WFH : WFO','',0,'Data Komposisi ASN WFH:WFO'],
+ ['sec','2','Penguatan Layanan Digital'],
+ ['opt','2a','E-office',SB,0,'Screenshoot Srikandi'],
+ ['opt','2b','Tanda tangan elektronik',SB,0,''],
+ ['opt','2c','Absensi elektronik',SB,0,'Screenshoot Aplikasi Presensi'],
+ ['opt','2d','SIMPEG',SB,0,'Screenshoot SIMPEG'],
+ ['opt','2e','SPBE',SB,0,'Screenshoot SPBE'],
+ ['opt','2f','Infrastruktur pendukung',['Memadai','Terbatas'],1,''],
+ ['sec','3','Pengendalian dan Pengawasan'],
+ ['opt','3a','Skema mekanisme pengendalian',['Ada','Dalam penyusunan'],0,'SE Bupati'],
+ ['opt','3b','Skema mekanisme pengawasan',['Ada','Dalam penyusunan'],0,SEBUP],
+ ['sec','4','Unit Pelayanan Publik'],
+ ['opt','4a','Unit pelayanan langsung tetap WFO',YT,0,SEBUP],
+ ['opt','4b','Unit pendukung WFH selektif',YT,0,''],
+ ['opt','4c','Target kinerja ASN tercapai',['Tercapai','Tidak tercapai'],0,''],
+ ['opt','4d','Kualitas pelayanan publik',['Meningkat','Tetap','Menurun'],1,'Sampel Indeks Kepuasan Masyarakat (Dinsos, Disdukcapil, RSUD Indrasari)'],
+ ['sec','5','Rapat, Bimtek, Seminar, dll'],
+ ['opt','5a','Dilaksanakan secara hybrid/daring',YT,0,'Dokumentasi Pelaksanaan Webinar'],
+ ['opt','5b','Pemanfaatan TIK',['Maksimal','Terbatas'],1,''],
+ ['sec','6','Pembatasan Perjalanan Dinas'],
+ ['pct','6a','Perjalanan dinas dalam negeri','50|50',0,DLA],
+ ['pct','6b','Perjalanan dinas luar negeri','70|',0,''],
+ ['opt','6c','Pengurangan frekuensi',YT,0,''],
+ ['opt','6d','Pengurangan jumlah rombongan',YT,0,''],
+ ['sec','7','Penggunaan Kendaraan Dinas'],
+ ['pct','7a','Pembatasan kendaraan dinas','50|50',0,DLA],
+ ['opt','7b','Penggunaan kendaraan listrik',YT,1,''],
+ ['opt','7c','Penggunaan transportasi umum',YT,1,''],
+ ['opt','7d','Penggunaan sepeda/transportasi non-fosil',YT,1,''],
+ ['sec','8','Efisiensi Energi di Lingkungan Kerja'],
+ ['opt','8a','ASN WFH mematikan perangkat elektronik',['Dipatuhi','Belum optimal'],0,''],
+ ['opt','8b','Kondisi ruangan kantor aman',YT,0,''],
+ ['sec','9','Pengecualian WFH (Tetap WFO)'],
+ ['opt','9','(Sesuai daftar dalam SE)',DL,0,SEBUP],
+ ['sec','10','Penghitungan Penghematan Anggaran'],
+ ['rp','10a','Penghematan listrik','hl',0,DLA],
+ ['rp','10b','Penghematan BBM','hb',0,''],
+ ['rp','10c','Penghematan air','ha',0,''],
+ ['rp','10d','Penghematan telepon','ht',0,''],
+ ['rp','10e','Penghematan operasional pegawai','ho',0,''],
+ ['rp','10f','Lainnya (sebutkan)','hx',0,''],
+ ['rp','10g','Total Penghematan','*',0,''],
+ ['sec','11','Pemanfaatan Hasil Penghematan'],
+ ['man','11a','Program prioritas daerah','m11a',0,''],
+ ['man','11b','Peningkatan kualitas pelayanan publik','m11b',0,''],
+ ['man','11c','Optimalisasi belanja produktif lainnya','m11c',0,''],
+ ['sec','12','Hari Bebas Kendaraan Bermotor (Car Free Day)'],
+ ['opt','12a','Dilaksanakan',YT,1,''],
+ ['txt','12b','Ruas jalan yang digunakan','-',0,''],
+ ['txt','12c','Frekuensi','- kali/minggu',0,''],
+ ['txt','12d','Durasi','- jam',0,''],
+ ['opt','12e','Penambahan jumlah hari/durasi/cakupan',YT,1,'']
+];
+const LAPTXT = {k13:'Sudah dilaksanakan dan belum terdapat kendala.', k14:'-'};
+const LAPCSS = '.lp{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#000;line-height:1.45}.lp p{margin:0 0 8px}.lp .c{text-align:center}.lp .r{text-align:right}.lp table.t{border-collapse:collapse;width:100%;margin:0 0 14px;font-size:10.5pt}.lp table.t th{background:#4472c4;color:#fff;border:1px solid #4472c4;padding:6px 8px;text-align:center}.lp table.t td{border:1px solid #4472c4;padding:5px 8px;vertical-align:top}.lp table.t tr.sec td{background:#ffff00;font-weight:bold;border:1px solid #4472c4}.lp table.t tr.alt td{background:#d9e2f3}.lp td.n{text-align:center;width:36px}.lp a{color:#0563c1}.lp tr{page-break-inside:avoid}.lp thead{display:table-header-group}.lp .pgb{page-break-before:always}.lp .ttd{margin:18px 0 0 50%;line-height:1.5;page-break-inside:avoid}@page ls{size:A4 landscape;margin:14mm 14mm}.ls{page:ls}@page WordSection2{size:841.9pt 595.3pt;mso-page-orientation:landscape;margin:40pt 42pt}div.WordSection2{page:WordSection2}.lp .keep{page-break-inside:avoid}.lp table.rk{font-size:8pt;table-layout:auto}.lp table.rk th,.lp table.rk td{padding:3px 2px}.lp table.rk td.n{width:18px}.lp .sp{height:70px}.lp table.mt td{border:0;padding:1px 4px;font-size:11pt}';
+const tglID = d => { const a=String(d||'').split('-'); return a.length===3?(+a[2])+' '+BLN[a[1]-1]+' '+a[0]:''; };
+const todayISO = () => new Date(Date.now()+7*36e5).toISOString().slice(0,10);
+function rpL(n){ n=Math.round(+n||0); return n?('Rp'+(n<0?'('+th(-n)+')':th(n))+',-'):'Rp0'; }
+const HMAP={hl:['LISTRIK'],hb:['BBM'],ha:['AIR'],ht:[],ho:['KEND'],hx:['SPPD','GAS']};
+function autoHemat(p,o){ if(!HIST) return 0; const mode=+LG('rumus',0), b=HIST.months[0]; let t=0;
+  (o==='*'?['hl','hb','ha','ht','ho','hx']:[o]).forEach(x=>HMAP[x].forEach(k=>{ const d=hAgg(k,b)-hAgg(k,p); t+=mode?-d:d; })); return t; }
+function lapHemat(p,o){ if(o==='*') return ['hl','hb','ha','ht','ho','hx'].reduce((s,x)=>s+lapHemat(p,x),0); const ov=LG('o_'+o,''); return (ov===''||ov==null)?autoHemat(p,o):+ov; }
+function progTotal(p){ const r=R(p,'prog'); return r&&r.rows?r.rows.reduce((a,x)=>a+(+x.v||0),0):0; }
+function LG(id,def){ const L=ST.lapd||{}; return L[id]!==undefined&&L[id]!==null?L[id]:def; }
+function parseB(b){ const a=String(b||'').split('|'), t=a[0].trim(), u=(a[1]||'').trim(); return {t,u:/^https?:\/\//i.test(u)?u:''}; }
+function lapBuild(p){
+  const out=[]; let alt=0;
+  LAP.forEach(r=>{
+    const [j,id,a,o,d,b0]=r;
+    if(j==='sec'){ out.push({sec:1,no:id,t:a}); alt=0; return; }
+    let h='',x='';
+    if(j==='opt'){ const sel=+LG(id,d); h=o.map((t,i)=>i===sel?'<b>&#10003; '+esc(t)+'</b>':esc(t)).join(' &nbsp;&nbsp;&nbsp; '); x=o.map((t,i)=>(i===sel?'✓ ':'')+t).join('   '); }
+    else if(j==='hari'){ const hr=LG('1b_h','Jumat'), ln=LG('1b_l',''); h='Hari: <b>&#10003;'+esc(hr)+'</b> &nbsp;&nbsp; Lainnya: '+(ln?esc(ln):'......'); x='Hari: ✓'+hr+'   Lainnya: '+(ln||'......'); }
+    else if(j==='wfh'){ const w=wfhAgg(p); x=w?nf(w.wfh,2)+'% : '+nf(w.wfo,2)+'%':'(belum ada data WFH:WFO)'; h=esc(x); }
+    else if(j==='pct'){ const df=o.split('|'), t=LG(id+'_t',df[0]), rr=LG(id+'_r',df[1]); x='Target: '+(t===''?'-':t+'%')+'    Realisasi: '+(rr===''?'-':rr+'%'); h=esc(x).replace('    ',' &nbsp;&nbsp;&nbsp; '); }
+    else if(j==='rp'){ const v=lapHemat(p,o); x=rpL(v); if(o==='hx') x+=' ('+(LG('10f_t','')||'perjalanan dinas dan gas')+')'; h=esc(x); if(o==='*')h='<b>'+h+'</b>'; }
+    else if(j==='man'){ const dv=(o==='m11a'&&LG(o,undefined)===undefined)?progTotal(p):num(LG(o,0)); x=rpL(dv); h=esc(x); }
+    else if(j==='txt'){ const v=LG(id,o); x=v; h=esc(v); }
+    const bb=parseB(LG('b'+id,b0)); out.push({no:id.replace(/^\d+/,''),id,a,h,x,b:bb,alt:(alt++%2)===1});
+  });
+  return out;
+}
+function lapHtml(p,letter){
+  const L=ST.lapd||{}, tg=LG('tgl',todayISO()), nomor=LG('nomor','000.8.3/BAG.ORG-SETDA/...'), se=LG('se','000.9.6.1/4412/SJ'), tj=LG('tujuan','Gubernur Riau\nc.q. Kepala Biro Pemerintahan dan Otonomi Daerah\nSekretariat Daerah Provinsi Riau\ndi\nPekanbaru'), nm=LG('ttd','Zulfahmi Adrian'), jb=LG('jab','a.n. Bupati Indragiri Hulu\nSekretaris Daerah,');
+  const bln=BLN[+p.split('-')[1]-1], pu=(bln+' tahun '+p.split('-')[0]);
+  const ttd='<div class="ttd">'+esc(jb).replace(/\n/g,'<br>')+'<div class="sp"></div>'+esc(nm)+'</div>';
+  let h='<div class="lp">';
+  if(letter){
+    h+='<p class="c" style="font-size:12pt;margin-bottom:14px">KABUPATEN INDRAGIRI HULU</p><p class="r">Rengat, '+esc(tglID(tg))+'</p>'+
+    '<table class="mt"><tr><td>Nomor</td><td>: '+esc(nomor)+'</td></tr><tr><td>Sifat</td><td>: Penting</td></tr><tr><td>Lampiran</td><td>: Satu berkas</td></tr><tr><td>Hal</td><td>: Laporan Pelaksanaan Transformasi Budaya Kerja ASN di Lingkungan Pemerintah Kabupaten Indragiri Hulu</td></tr></table>'+
+    '<p style="margin-top:14px">Yth.<br>'+esc(tj).replace(/\n/g,'<br>')+'</p>'+
+    '<p style="text-align:justify;text-indent:36px;margin-top:14px">Menindaklanjuti Surat Edaran Menteri Dalam Negeri Nomor '+esc(se)+' tentang Penyesuaian Pelaksanaan Transformasi Budaya Kerja Aparatur Negara di Lingkungan Pemerintah Daerah, bersama ini kami sampaikan Laporan Pelaksanaan Transformasi Budaya Kerja ASN Kabupaten Indragiri Hulu pada bulan '+esc(bln)+' sebagaimana terlampir.</p>'+
+    '<p style="text-align:justify;text-indent:36px">Demikian disampaikan untuk dapat dipergunakan sebagaimana mestinya, atas perhatiannya diucapkan terima kasih.</p>'+ttd+
+    '<p style="font-size:10pt;margin-top:20px">Tembusan:<br>1. Bupati Indragiri Hulu; dan<br>2. Wakil Bupati Indragiri Hulu.</p><div class="pgb"></div>';
+  }
+  h+='<table class="mt" style="margin-left:40%"><tr><td>Lampiran</td><td>: Surat</td><td>: '+esc(nomor)+'</td></tr><tr><td></td><td>&nbsp; Tanggal</td><td>: '+esc(tglID(tg))+'</td></tr></table>'+
+  '<p class="c" style="margin-top:14px">PEMERINTAH KABUPATEN INDRAGIRI HULU<br>LAPORAN PELAKSANAAN SURAT EDARAN MENTERI DALAM NEGERI<br>NOMOR : '+esc(se)+' TENTANG PENYESUAIAN PELAKSANAAN<br>TRANSFORMASI BUDAYA KERJA APARATUR NEGARA<br>DI LINGKUNGAN PEMERINTAH DAERAH<br>PERIODE BULAN : '+esc(pu.toUpperCase())+'</p><p class="c" style="margin:12px 0">LAPORAN BUPATI KEPADA GUBERNUR</p>'+
+  '<table class="t"><thead><tr><th style="width:36px">No.</th><th style="width:27%">ASPEK PELAKSANAAN</th><th>KETERANGAN / REALISASI</th><th style="width:24%">Bukti Dukung</th></tr></thead><tbody>'+
+  lapBuild(p).map(r=>r.sec?'<tr class="sec"><td colspan="4">'+esc(r.no)+' &nbsp; '+esc(r.t)+'</td></tr>':'<tr'+(r.alt?' class="alt"':'')+'><td class="n">'+esc(r.no)+'</td><td>'+esc(r.a)+'</td><td>'+r.h+'</td><td>'+(r.b.t?(r.b.u?'<a href="'+esc(r.b.u)+'">'+esc(r.b.t)+'</a>':esc(r.b.t)):'')+'</td></tr>').join('')+
+  '</tbody></table><table class="t"><thead><tr><th style="width:36px">No.</th><th style="width:27%">ASPEK PELAKSANAAN</th><th>KETERANGAN / REALISASI</th></tr></thead><tbody><tr><td class="n">13</td><td>Kendala Pelaksanaan</td><td>'+esc(LG('k13',LAPTXT.k13)).replace(/\n/g,'<br>')+'</td></tr><tr class="alt"><td class="n">14</td><td>Tindak Lanjut / Rekomendasi</td><td>'+esc(LG('k14',LAPTXT.k14)).replace(/\n/g,'<br>')+'</td></tr></tbody></table>'+
+  '<div class="keep"><p class="r" style="margin-top:16px">Dilaporkan di : Kabupaten Indragiri Hulu<br>Pada tanggal : '+esc(tglID(tg))+'</p>'+ttd+'</div>';
+  if(HIST&&+LG('pendukung',1)){ hInit(); const rk=rekapData(UM.indexOf(p)>0?UM.indexOf(p):-1); if(rk) h+='<br clear="all" style="page-break-before:always;mso-break-type:section-break"><div class="WordSection2 ls"><p class="c" style="font-weight:bold">DATA PENGHEMATAN BELANJA BULAN '+esc(BLN[2].toUpperCase())+' S.D. '+esc(BLN[+UM[rk.ci].split('-')[1]-1].toUpperCase())+' '+UM[rk.ci].split('-')[0]+'<br>KABUPATEN INDRAGIRI HULU</p>'+rekapTable(rk,'t rk',true)+'<p style="font-size:9.5pt">Penghematan = realisasi belanja bulan Maret dikurangi realisasi bulan laporan; tanda kurung berarti belanja bulan laporan lebih besar dari Maret.</p>'+ttd+'</div>'; }
+  return h+'</div>';
+}
+function lapView(){
+  const p=ST.period, me=ST.me, adm=me.peran==='admin';
+  if(!ST.lapd||ST.lapdP!==p){ ST.lapd=JSON.parse(JSON.stringify((R(p,'cfg')||{}).lap||{})); ST.lapdP=p; }
+  if(LG('surat',1)===undefined) ST.lapd.surat=1;
+  const w=wfhAgg(p), sk=skmAgg(p);
+  const info='<div class="note-banner"><span>&#9432;</span><span>Terisi otomatis dari data PD: komposisi WFH:WFO (rata-rata '+(w?w.n:0)+' PD), penghematan (dihitung dari realisasi belanja PD: Maret dikurangi bulan laporan, total '+rpL(lapHemat(p,'*'))+'), dan pemanfaatan lampiran M ('+rpL(progTotal(p))+'). Poin lain (centang pilihan, target %, bukti dukung) diatur di kotak isian di bawah'+(sk.avg!=null?'; rata-rata IKM bulan ini '+nf(sk.avg,2)+' ('+mutu(sk.avg)[1]+')':'')+'.</span></div>';
+  const bar='<div class="lapbar"><button class="btn" onclick="lapPrint()">&#128424; Cetak / PDF</button><button class="btn ghost" onclick="lapWord()">&#128196; Unduh Word</button><button class="btn ghost" onclick="lapExcel()">&#128202; Unduh Excel</button>'+(adm?'<button class="btn ghost" onclick="lapSave()">&#128190; Simpan isian</button>':'')+'</div>';
+  const ip=(id,v,ph,w)=>'<input class="t" style="'+(w||'')+'" placeholder="'+esc(ph||'')+'" value="'+esc(v)+'" oninput="lapSet(\''+id+'\',this.value)">';
+  const rows=LAP.map(r=>{
+    const [j,id,a,o,d,b0]=r;
+    if(j==='sec') return '<tr><td colspan="3" style="background:#fff3b0;font-weight:700">'+r[1]+'. '+esc(r[2])+'</td></tr>';
+    let f='';
+    if(j==='opt') f='<select class="t" onchange="lapSet(\''+id+'\',+this.value)">'+o.map((t,i)=>'<option value="'+i+'"'+(i===+LG(id,d)?' selected':'')+'>'+esc(t)+'</option>').join('')+'</select>';
+    else if(j==='hari') f='<div style="display:flex;gap:8px">'+ip('1b_h',LG('1b_h','Jumat'),'Hari WFH')+ip('1b_l',LG('1b_l',''),'Hari lainnya (opsional)')+'</div>';
+    else if(j==='wfh') f='<span class="hint">Otomatis: rata-rata WFH:WFO seluruh PD yang melapor</span>';
+    else if(j==='pct'){ const df=o.split('|'); f='<div style="display:flex;gap:8px;align-items:center">Target '+ip(id+'_t',LG(id+'_t',df[0]),'%','width:80px')+'% &nbsp;Realisasi '+ip(id+'_r',LG(id+'_r',df[1]),'%','width:80px')+'%</div>'; }
+    else if(j==='rp'){ if(o==='*') f='<span class="hint">Jumlah otomatis dari 10a&ndash;10f</span>'; else { const ov=LG('o_'+o,''); f='<input class="t" inputmode="numeric" placeholder="Otomatis: '+negF(autoHemat(p,o))+'" value="'+(ov===''||ov==null?'':(ov<0?'-':'')+th(Math.abs(ov)))+'" oninput="lapOv(this,\''+o+'\')"><span class="hint">'+(o==='ht'?'Tidak ada data telepon; isi manual jika ada.':o==='ho'?'Dari belanja operasional kendaraan dinas.':o==='hx'?'Otomatis: perjalanan dinas (SPPD) + gas.':'Kosongkan untuk memakai hitungan otomatis.')+'</span>'+(o==='hx'?ip('10f_t',LG('10f_t',''),'Keterangan (opsional)'):''); } }
+    else if(j==='man'){ const cur=(o==='m11a'&&LG(o,undefined)===undefined)?th(progTotal(p)):th(num(LG(o,0))); f='<input class="t" inputmode="numeric" placeholder="Rp" value="'+cur+'" oninput="lapRp(this,\''+o+'\')">'+(o==='m11a'?'<span class="hint">Bawaan: total lampiran M ('+rpL(progTotal(p))+'). Sesuaikan bila perlu.</span>':''); }
+    else if(j==='txt') f=ip(id,LG(id,o),'');
+    return '<tr><td style="width:44px;white-space:nowrap">'+esc(id)+'</td><td style="width:28%">'+esc(a)+'</td><td>'+f+'</td><td style="width:30%">'+(j==='sec'?'':ip('b'+id,LG('b'+id,b0),'Teks bukti | https://tautan (opsional)'))+'</td></tr>';
+  }).join('').replace(/<tr><td colspan="3"/g,'<tr><td colspan="4"');
+  const meta='<div class="form-grid"><div><label class="f">Nomor surat</label>'+ip('nomor',LG('nomor','000.8.3/BAG.ORG-SETDA/...'))+'</div><div><label class="f">Tanggal surat</label><input class="t" type="date" value="'+esc(LG('tgl',todayISO()))+'" onchange="lapSet(\'tgl\',this.value)"></div><div><label class="f">Nomor SE Mendagri</label>'+ip('se',LG('se','000.9.6.1/4412/SJ'))+'</div><div><label class="f">Penandatangan</label>'+ip('ttd',LG('ttd','Zulfahmi Adrian'))+'</div></div><label class="f">Tujuan surat (satu baris per kalimat)</label><textarea class="t" rows="5" oninput="lapSet(\'tujuan\',this.value)">'+esc(LG('tujuan','Gubernur Riau\nc.q. Kepala Biro Pemerintahan dan Otonomi Daerah\nSekretariat Daerah Provinsi Riau\ndi\nPekanbaru'))+'</textarea><label class="f"><input type="checkbox" '+(+LG('pendukung',1)?'checked':'')+' onchange="lapSet(\'pendukung\',this.checked?1:0)"> Lampirkan tabel data pendukung realisasi belanja (seperti dari BPKAD)</label><label class="f">Rumus penghematan (butir 10)</label><select class="t" onchange="lapSet(\'rumus\',+this.value)"><option value="0"'+(+LG('rumus',0)?'':' selected')+'>Standar: realisasi Maret &minus; bulan laporan (hemat = positif)</option><option value="1"'+(+LG('rumus',0)?' selected':'')+'>Mengikuti data BPKAD: bulan laporan &minus; Maret</option></select><label class="f"><input type="checkbox" '+(+LG('surat',1)?'checked':'')+' onchange="lapSet(\'surat\',this.checked?1:0)"> Sertakan surat pengantar (halaman pertama)</label>';
+  const tail='<div class="form-grid"><div><label class="f">13. Kendala pelaksanaan</label><textarea class="t" rows="3" oninput="lapSet(\'k13\',this.value)">'+esc(LG('k13',LAPTXT.k13))+'</textarea></div><div><label class="f">14. Tindak lanjut / rekomendasi</label><textarea class="t" rows="3" oninput="lapSet(\'k14\',this.value)">'+esc(LG('k14',LAPTXT.k14))+'</textarea></div></div>';
+  const form=adm?'<details class="panel form-panel lapform" open><summary style="cursor:pointer;font-weight:700;font-size:15px">Isian laporan (centang, target, bukti dukung) &mdash; perubahan langsung tampil di pratinjau</summary><div style="margin-top:14px">'+meta+'<div class="table-scroll" style="margin-top:14px"><table class="tight"><thead><tr><th>No.</th><th>Aspek</th><th>Isian</th><th>Bukti dukung</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+tail+'<div style="margin-top:14px"><button class="btn" onclick="lapSave()">Simpan isian</button></div></div></details>':'';
+  return '<main class="wrap">'+dlBanner(p)+info+bar+form+'<style>'+LAPCSS+'</style><div class="paper" id="lapPaper">'+lapHtml(p,+LG('surat',1))+'</div></main>';
+}
+function lapRefresh(){ const e=$('#lapPaper'); if(e)e.innerHTML=lapHtml(ST.period,+LG('surat',1)); }
+function lapSet(k,v){ ST.lapd[k]=v; lapRefresh(); }
+function lapOv(el,o){ const neg=/^\s*-/.test(el.value), d=el.value.replace(/\D/g,''); el.value=d?(neg?'-':'')+th(d):(neg?'-':''); ST.lapd['o_'+o]=d?(neg?-1:1)*(+d):''; lapRefresh(); }
+function lapRp(el,k){ const d=el.value.replace(/\D/g,''); el.value=d?th(d):''; ST.lapd[k]=d?+d:0; lapRefresh(); }
+async function lapSave(){
+  if(ST.me.peran!=='admin') return; const p=ST.period;
+  const rec=Object.assign({},R(p,'cfg')||{},{lap:ST.lapd,by:ST.me.nama,at:new Date().toISOString()});
+  try{ const res=await call('save',{period:p,key:'cfg',rec}); if(!res.ok) return toast(res.msg||'Gagal menyimpan'); (ST.db[p]=ST.db[p]||{}).cfg=rec; toast('Isian laporan disimpan ✔'); }
+  catch(e){ toast('Gagal menyimpan: periksa koneksi internet'); }
+}
+function lapPrint(){ window.print(); }
+function dlBlob(name,type,data){ const b=new Blob([data],{type}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ a.remove(); URL.revokeObjectURL(a.href); },1500); }
+function lapWord(){
+  const p=ST.period, doc='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Laporan TBK '+pl(p)+'</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]--><style>@page{size:21cm 29.7cm;margin:2cm 1.8cm}body{font-family:Arial}'+LAPCSS+'</style></head><body>'+lapHtml(p,+LG('surat',1))+'</body></html>';
+  dlBlob('Laporan_TBK_Provinsi_'+p+'.doc','application/msword;charset=utf-8','\ufeff'+doc); toast('Word diunduh (.doc, buka dengan Microsoft Word)');
+}
+function rekapAoA(ci){ const rk=rekapData(ci); if(!rk) return null; const h=i=>pl(UM[i]);
+  return [['DATA PENGHEMATAN BELANJA BULAN MARET S.D. '+pl(UM[rk.ci]).toUpperCase()],[],['No.','Uraian'].concat(rk.ms.map(h),['Penghematan ('+h(0)+' - '+h(rk.ci)+')','%'])]
+   .concat(rk.rows.map((r,n)=>[n+1,r.l].concat(r.vals,[r.h,r.pct==null?'':Math.round(r.pct*100)/100])),[['','TOTAL'].concat(rk.tot.vals,[rk.tot.h,rk.tot.pct==null?'':Math.round(rk.tot.pct*100)/100])]); }
+function lapExcel(){
+  if(typeof XLSX==='undefined') return toast('Pustaka Excel belum termuat (perlu internet)');
+  const p=ST.period, rows=[['LAPORAN PELAKSANAAN SE MENDAGRI NOMOR '+LG('se','000.9.6.1/4412/SJ')+' TENTANG PENYESUAIAN PELAKSANAAN TRANSFORMASI BUDAYA KERJA APARATUR NEGARA'],['PEMERINTAH KABUPATEN INDRAGIRI HULU - PERIODE BULAN: '+pl(p).toUpperCase()],['LAPORAN BUPATI KEPADA GUBERNUR'],[],['No.','Aspek Pelaksanaan','Keterangan / Realisasi','Bukti Dukung']];
+  lapBuild(p).forEach(r=>rows.push(r.sec?[r.no,r.t,'','']:[r.no,r.a,r.x,r.b.t+(r.b.u?' ('+r.b.u+')':'')]));
+  rows.push([],[13,'Kendala Pelaksanaan',LG('k13',LAPTXT.k13)],[14,'Tindak Lanjut / Rekomendasi',LG('k14',LAPTXT.k14)],[],['','Dilaporkan di : Kabupaten Indragiri Hulu'],['','Pada tanggal : '+tglID(LG('tgl',todayISO()))],['','Sekretaris Daerah: '+LG('ttd','')]);
+  const ws=XLSX.utils.aoa_to_sheet(rows); if(ws) ws['!cols']=[{wch:6},{wch:44},{wch:46},{wch:46}];
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Laporan TBK');
+  if(HIST){ hInit(); const rs=rekapAoA(UM.indexOf(p)>0?UM.indexOf(p):-1); if(rs){ const w2=XLSX.utils.aoa_to_sheet(rs); if(w2)w2['!cols']=[{wch:6},{wch:42}].concat(UM.map(()=>({wch:17})),[{wch:20},{wch:8}]); XLSX.utils.book_append_sheet(wb,w2,'Data Pendukung Belanja'); } }
+  XLSX.writeFile(wb,'Laporan_TBK_Provinsi_'+p+'.xlsx');
+}
+
 /* ================= PENGATURAN ADMIN ================= */
 function setView(){
   const bad=pdUsers().filter(u=>u.u!=='rsud'&&(!has(u,'keu')||!has(u,'wfh')));   // RSUD hanya SKM
@@ -567,7 +723,7 @@ function setView(){
   (bad.length?'<div class="warn"><b>'+bad.length+' akun PD belum memiliki menu Keuangan atau WFH:WFO</b> ('+bad.slice(0,6).map(u=>esc(u.nama)).join(', ')+(bad.length>6?', dll.':'')+'). Biasanya karena sheet &ldquo;Akun&rdquo; masih dari versi lama. Jalankan fungsi <b>perbaruiModulAkun</b> di Apps Script (atau isi kolom modul dengan <b>keu,wfh</b>), lalu klik Muat ulang.</div>':'<div class="warn" style="background:var(--good-bg);border-color:#b8dcc7;color:var(--good)">✓ Semua akun PD sudah memiliki menu Keuangan dan WFH:WFO.</div>')+'</section></main>';
 }
 async function putCfg(p,deadline){
-  const rec={deadline:deadline,by:ST.me.nama,at:new Date().toISOString()};
+  const rec=Object.assign({},R(p,'cfg')||{},{deadline:deadline,by:ST.me.nama,at:new Date().toISOString()});
   try{ const res=await call('save',{period:p,key:'cfg',rec}); if(!res.ok) return toast(res.msg||'Gagal menyimpan'); (ST.db[p]=ST.db[p]||{}).cfg=rec; toast(deadline?'Batas waktu '+pl(p)+' disimpan ✔':'Dikembalikan ke bawaan'); render(); }
   catch(e){ toast('Gagal menyimpan: periksa koneksi internet'); }
 }
@@ -581,11 +737,10 @@ function exportXlsx(){
   const wu=wfhUsers(), wa=wfhAgg(p);
   add('Status Pelaporan',[['Perangkat Daerah','Laporan','Status','Dikirim','Terlambat']].concat(tasks(p).map(t=>[t.u.nama,t.l,t.r?'Sudah':'Belum',t.r?dt(t.r.at):'',t.r&&isLate(t.r,p)?'Ya':''])),[55,14,10,20,10]);
   add('A Komposisi ASN',[['No.','Perangkat Daerah','WFH (%)','WFO (%)']].concat(wu.map((u,i)=>{ const r=R(p,'wfh:'+u.u); return [i+1,u.nama,r?r.wfh:'',r?r.wfo:'']; }),[['','Rata-rata PD yang melapor',wa?Math.round(wa.wfh*100)/100:'',wa?Math.round(wa.wfo*100)/100:'']]),[6,60,12,12]);
-  FIELDS.forEach(f=>{ const rows=ku.map((u,i)=>{ const v=KV(p,u.u,f.k); return [i+1,u.nama,v==null?'':v]; }); const tot=ku.reduce((a,u)=>a+(KV(p,u.u,f.k)||0),0); add((f.l||'Perj.Dinas')+' '+f.s,[['No.','Perangkat Daerah',f.h?'Penghematan '+pl(p):f.t+' '+pl(p)]].concat(rows,[['','Total',tot]]),[6,60,24]); });
   const pr=R(p,'prog'); add('M Pemanfaatan',[['No.','Program/Kegiatan/Sub Kegiatan','Anggaran']].concat(((pr&&pr.rows)||[]).map((x,i)=>[i+1,x.n,x.v]),[['','Total',((pr&&pr.rows)||[]).reduce((a,x)=>a+(+x.v||0),0)]]),[6,60,20]);
   add('N SKM',[['Unit Layanan','Bulan','Nilai IKM','Jumlah Responden','Mutu']].concat(skmUsers().map(u=>{ const r=R(p,'skm:'+u.u); return [u.nama,pl(p),r?r.ikm:'',r?r.resp:'',r?mutu(r.ikm)[0]+' - '+mutu(r.ikm)[1]:'']; })),[45,16,10,18,20]);
-  add('Rekap Semua PD',[['Perangkat Daerah'].concat(FIELDS.map(f=>(f.l?f.l+'. ':'')+f.s))].concat(ku.map(u=>[u.nama].concat(FIELDS.map(f=>{ const v=KV(p,u.u,f.k); return v==null?'':v; })))),[55].concat(FIELDS.map(()=>18)));
-  add('Tren Bulanan',[['Kategori'].concat(ms.map(pl))].concat(FIELDS.map(f=>[(f.l?f.l+'. ':'')+f.s].concat(ms.map(m=>SUM(m,[f.k]))))),[36].concat(ms.map(()=>18)));
+  add('Realisasi Belanja PD',[['Perangkat Daerah','Perjalanan Dinas (SPPD)','BBM','Air','Gas','Listrik','Operasional Kendaraan']].concat(ku.map(u=>[u.nama].concat(['pd','rb','ra','rg','rl','rk'].map(k=>{ const v=KV(p,u.u,k); return v==null?'':v; })))),[55,22,16,16,16,16,22]);
+  if(HIST){ hInit(); const rs=rekapAoA(UM.indexOf(p)>0?UM.indexOf(p):-1); if(rs) add('Rekap Penghematan',rs,[6,42].concat(UM.map(()=>17),[22,8])); }
   if(HIST){ hInit(); const ix=hMon(); HIST.cats.forEach(c=>{ const rows=HIST.pd.map(u=>({u,v:ix.map(i=>hv(c.k,u,i))})).sort((a,b)=>b.v.reduce((s,x)=>s+(x||0),0)-a.v.reduce((s,x)=>s+(x||0),0)); add('Belanja '+HS[c.k],[['No.','Perangkat Daerah'].concat(ix.map(i=>pl(UM[i])+(hPart(i)?' (sementara)':'')))].concat(rows.map((r,i)=>[i+1,hName(r.u)].concat(r.v.map(x=>x==null?'':x))),[['','Total'].concat(ix.map(i=>hSum(c.k,i)))]),[6,60].concat(ix.map(()=>16))); }); }
   XLSX.writeFile(wb,'Rekap_TBK_'+p+'.xlsx');
 }
