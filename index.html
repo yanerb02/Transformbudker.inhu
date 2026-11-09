@@ -489,9 +489,10 @@ function inputView(){
 function setITab(id){ ST.itab=id; render(); }
 function pnl(title,key,body){ const r=R(ST.period,key), chip='<span class="chip-s '+(r?'ok':'no')+'">'+(r?'Terkirim '+dt(r.at):'Belum dikirim')+'</span>';
   return '<section class="panel form-panel"><div class="section-head" style="margin-bottom:6px"><div><p class="section-eyebrow">'+pl(ST.period).toUpperCase()+'</p><h2 class="section-title" style="font-size:18px">'+title+'</h2></div>'+chip+'</div>'+body+'</section>'; }
+const EXR={pd:'Contoh: uang harian, transport, penginapan perjalanan dinas dalam dan luar daerah.',rb:'Contoh: BBM kendaraan dinas, mesin genset, mesin potong rumput.',ra:'Contoh: tagihan air PDAM kantor.',rg:'Contoh: gas elpiji untuk dapur atau pantry kantor.',rl:'Contoh: tagihan listrik PLN kantor, token listrik.',rk:'Contoh: ATK, fotokopi dan cetak, makan minum rapat, bahan habis pakai, honor operasional.'};
 function keuForm(t,p){
   const r=R(p,'keu:'+t.u), v=(r&&r.v)||{};
-  const inp=f=>'<div><label class="f">'+f.t+'</label><input class="t rp" inputmode="numeric" data-k="'+f.k+'" placeholder="0" value="'+(r&&v[f.k]!=null?th(v[f.k]):'')+'" oninput="fmtIn(this)"></div>';
+  const inp=f=>'<div><label class="f">'+f.t+'</label><input class="t rp" inputmode="numeric" data-k="'+f.k+'" placeholder="0" value="'+(r&&v[f.k]!=null?th(v[f.k]):'')+'" oninput="fmtIn(this)"><p class="hint" style="margin:6px 0 0">'+(EXR[f.k]||'')+'</p></div>';
   const real=[{k:'pd',t:'Perjalanan dinas (SPPD)'}].concat(RB.map(f=>({k:f.k,t:f.t==='Operasional pegawai'?f.t:'Belanja '+f.t})));
   return '<p class="hint">Isi realisasi belanja bulan ini dalam rupiah (sama seperti rekap realisasi belanja yang biasa dikirim). Isi 0 jika tidak ada. Data pembatasan dan penghematan dihitung dan diisi oleh Bagian Organisasi.</p><div id="f-keu"><div class="form-grid">'+real.map(inp).join('')+'</div></div><div class="tot"><span>Total realisasi belanja</span><b id="keuTot">Rp 0</b></div><button class="btn full" onclick="saveKeu(\''+t.u+'\')">'+(r?'Perbarui laporan':'Kirim laporan')+'</button>';
 }
