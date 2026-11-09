@@ -64,7 +64,8 @@ section{margin-bottom:52px}
 .bar-total-label{position:absolute;bottom:256px;left:50%;transform:translateX(-50%);font-size:10.5px;color:var(--teal-900);font-weight:700;white-space:nowrap}
 table.tight{font-size:12.5px}table.tight thead th,table.tight tbody td{padding:10px 7px}table.tight tbody td.name{min-width:150px;max-width:190px}
 .jump{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 30px}.jump a{border:1px solid var(--line);background:#fff;padding:8px 15px;border-radius:100px;font:600 12.5px Manrope,sans-serif;color:var(--teal-800);text-decoration:none}.jump a:hover{border-color:var(--teal-500);background:var(--teal-100)}
-@media print{body.lapmode header.top,body.lapmode .lapbar,body.lapmode details.lapform,body.lapmode footer,body.lapmode .note-banner,body.lapmode #toast{display:none!important}body.lapmode .paper{overflow:visible!important;box-shadow:none!important;padding:0!important;max-width:none!important;margin:0!important;border:0!important}body.lapmode main.wrap{padding:0!important;max-width:none!important}body.lapmode{background:#fff!important}@page{size:A4;margin:16mm 15mm}}
+#statPaper{display:none}
+@media print{body.statmode #root,body.statmode #toast,body.statmode footer{display:none!important}body.statmode #statPaper{display:block!important}body.statmode{background:#fff!important}#statPaper{font:10.5pt/1.4 Arial,sans-serif;color:#000}#statPaper h1{font-size:13pt;text-align:center;margin:0 0 2px}#statPaper .sub{text-align:center;margin:0 0 10px}#statPaper table{width:100%;border-collapse:collapse;font-size:9.5pt}#statPaper th,#statPaper td{border:1px solid #444;padding:4px 6px;vertical-align:top}#statPaper th{background:#e4ece9}#statPaper tr{page-break-inside:avoid}#statPaper .c{text-align:center}#statPaper .no{color:#b42318;font-weight:bold}#statPaper .ok{color:#14673f}body.lapmode header.top,body.lapmode .lapbar,body.lapmode details.lapform,body.lapmode footer,body.lapmode .note-banner,body.lapmode #toast{display:none!important}body.lapmode .paper{overflow:visible!important;box-shadow:none!important;padding:0!important;max-width:none!important;margin:0!important;border:0!important}body.lapmode main.wrap{padding:0!important;max-width:none!important}body.lapmode{background:#fff!important}@page{size:A4;margin:16mm 15mm}}
 .lapbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.lapform table td{vertical-align:top}.lapform .t{padding:8px 10px;font-size:13.5px}.paper{background:#fff;max-width:830px;margin:0 auto 30px;padding:46px 56px;border:1px solid var(--line);box-shadow:0 8px 30px rgba(19,74,68,.08)}@media (max-width:820px){.paper{padding:20px 14px;overflow-x:auto}}
 html{scroll-behavior:smooth}section[id]{scroll-margin-top:16px}
 @media (max-width:820px){.barchart.many .bar-total-label{display:none}.barchart.many .bar-month-label{font-size:8px}}
@@ -277,7 +278,7 @@ async function refresh(){ try{ await reload(); render(); toast('Data dimuat ulan
 function render(){
   if(!ST.me){ loginView(); return; }
   const y=window.scrollY;
-  const v=ST.view; document.body.classList.toggle('lapmode',v==='lap'&&canLap(ST.me)); $('#root').innerHTML = v==='lap'&&canLap(ST.me) ? head(true)+lapView()+foot() :  v==='input'&&canInput(ST.me) ? head(true)+inputView()+foot() : (v==='set'&&ST.me.peran==='admin' ? head(true)+setView()+foot() : head(false)+dashView()+foot());
+  const v=ST.view; document.body.classList.remove('statmode'); document.body.classList.toggle('lapmode',v==='lap'&&canLap(ST.me)); $('#root').innerHTML = v==='lap'&&canLap(ST.me) ? head(true)+lapView()+foot() :  v==='input'&&canInput(ST.me) ? head(true)+inputView()+foot() : (v==='set'&&ST.me.peran==='admin' ? head(true)+setView()+foot() : head(false)+dashView()+foot());
   if($('#keuTot')) keuTot();
   if($('#prRows')) prDraw();
   window.scrollTo(0,y);
@@ -314,7 +315,7 @@ function dashView(){
   '<section id="sec-hm"><div class="section-head"><div><p class="section-eyebrow">REKAP KESELURUHAN</p><h2 class="section-title">Realisasi Belanja &amp; Penghematan</h2></div><p class="section-note">Gabungan seluruh PD, format seperti data pendukung dari BPKAD. Penghematan = realisasi Maret dikurangi realisasi bulan '+pl(p)+'.</p></div><div class="panel">'+safe('rekap',()=>rekapHtml(p))+'</div></section>'+
   '<section id="sec-wfh"><div class="section-head"><div><p class="section-eyebrow">KOMPOSISI ASN</p><h2 class="section-title">Perbandingan WFH dan WFO</h2></div><p class="section-note">Total persentase dalam satu bulan (bukan per hari), diisi oleh masing-masing PD untuk pegawainya.</p></div><div class="panel">'+safe('WFH',()=>wfhHtml(p))+'</div></section>'+
   '<section id="sec-skm"><div class="section-head"><div><p class="section-eyebrow">KUALITAS LAYANAN PUBLIK</p><h2 class="section-title">Hasil Survei Kepuasan Masyarakat (SKM)</h2></div><p class="section-note">Mutu pelayanan mengikuti Permenpan RB No. 14 Tahun 2017.</p></div><div class="panel">'+safe('SKM',()=>skmHtml(p))+'</div></section>'+
-  '<section id="sec-kep"><div class="section-head"><div><p class="section-eyebrow">KEPATUHAN</p><h2 class="section-title">Status Pelaporan '+pl(p)+'</h2></div></div><div class="panel">'+safe('kepatuhan',()=>kepHtml(p))+'</div></section></main>';
+  '<section id="sec-kep"><div class="section-head"><div><p class="section-eyebrow">KEPATUHAN</p><h2 class="section-title">Status Pelaporan '+pl(p)+'</h2></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" style="padding:9px 16px;font-size:13px" onclick="printStatus()">🖨 Cetak / PDF status</button></div></div><div class="panel">'+safe('kepatuhan',()=>kepHtml(p))+'</div></section></main>';
 }
 function kpiHtml(p){
   const T=tasks(p), done=T.filter(t=>t.r).length, pct=T.length?Math.round(done/T.length*100):0;
@@ -360,6 +361,22 @@ function skmHtml(p){
   const matrix=ms.length>1?'<div class="table-scroll" style="margin-top:6px"><table><thead><tr><th>Unit layanan</th>'+ms.map(m=>'<th class="num">'+ps(m)+'</th>').join('')+'</tr></thead><tbody>'+us.map(u=>'<tr><td class="name">'+esc(u.nama)+'</td>'+ms.map(m=>{const r=R(m,'skm:'+u.u);return '<td class="num">'+(r?nf(r.ikm,2):'–')+'</td>';}).join('')+'</tr>').join('')+'</tbody></table></div>':'';
   return '<div class="skm-grid">'+cards+'</div>'+(ag.avg!=null?'<div class="mini-stat"><div class="k">RATA-RATA TERTIMBANG JUMLAH RESPONDEN &middot; '+ps(p).toUpperCase()+'</div><div class="v">'+nf(ag.avg,2)+' &middot; '+mutu(ag.avg)[1]+' <span style="font-size:13px;font-weight:600;color:var(--ink-soft)">('+th(ag.rs)+' responden)</span></div></div>':'')+matrix+'<p class="hint" style="margin-top:14px">Mutu: A (Sangat Baik) 88,31&ndash;100 &middot; B (Baik) 76,61&ndash;88,30 &middot; C (Kurang Baik) 65,00&ndash;76,60 &middot; D (Tidak Baik) 25,00&ndash;64,99.</p>';
 }
+function printStatus(){
+  const p=ST.period, T=tasks(p), by={};
+  T.forEach(t=>{ (by[t.u.u]=by[t.u.u]||{u:t.u,t:{}}).t[t.l]=t; });
+  const L=Object.values(by).sort((a,b)=>{ const f=x=>Object.values(x.t).filter(y=>!y.r).length; return f(b)-f(a)||a.u.nama.localeCompare(b.u.nama); });
+  const cols=['Keuangan','WFH/WFO','SKM','Pemanfaatan'].filter(c=>T.some(t=>t.l===c));
+  const done=T.filter(t=>t.r).length, pct=T.length?Math.round(done/T.length*100):0, full=L.filter(x=>Object.values(x.t).every(y=>y.r)).length, dl=getDeadline(p);
+  const cell=t=>!t?'<td class="c">&ndash;</td>':(t.r?'<td class="c ok">✓ Sudah<br><span style="font-size:8pt">'+esc(dt(t.r.at))+(isLate(t.r,p)?' (terlambat)':'')+'</span></td>':'<td class="c no">'+(t.part?'◐ Sebagian':'✗ Belum')+'</td>');
+  const now=new Date().toLocaleString('id-ID',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const h='<h1>STATUS PELAPORAN TRANSFORMASI BUDAYA KERJA</h1><p class="sub">Kabupaten Indragiri Hulu<br>Periode '+pl(p)+(dl?' &middot; Batas waktu '+esc(fmtDate(dl)):'')+'</p>'+
+   '<p><b>'+done+' dari '+T.length+' laporan sudah masuk ('+pct+'%).</b> '+full+' dari '+L.length+' Perangkat Daerah sudah lengkap, '+(L.length-full)+' belum lengkap. Dicetak '+esc(now)+'.</p>'+
+   '<table><thead><tr><th style="width:26px">No.</th><th>Perangkat Daerah</th>'+cols.map(c=>'<th style="width:'+Math.floor(52/cols.length)+'%">'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+L.map((x,i)=>'<tr><td class="c">'+(i+1)+'</td><td>'+esc(x.u.nama)+'</td>'+cols.map(c=>cell(x.t[c])).join('')+'</tr>').join('')+'</tbody></table>'+
+   '<p style="font-size:8.5pt;margin-top:8px">✓ sudah dikirim &middot; ◐ sebagian terisi &middot; ✗ belum dikirim &middot; &ndash; tidak wajib. Diurutkan dari yang paling belum lengkap.</p>';
+  let el=document.getElementById('statPaper'); if(!el){ el=document.createElement('div'); el.id='statPaper'; document.body.appendChild(el); }
+  el.innerHTML=h; document.body.classList.add('statmode'); window.print();
+}
+window.addEventListener('afterprint',()=>document.body.classList.remove('statmode'));
 function kepHtml(p){
   const T=tasks(p), done=T.filter(t=>t.r).length, pct=T.length?Math.round(done/T.length*100):0, by={};
   T.forEach(t=>{ (by[t.u.u]=by[t.u.u]||{u:t.u,t:[]}).t.push(t); });
@@ -489,7 +506,7 @@ function inputView(){
 function setITab(id){ ST.itab=id; render(); }
 function pnl(title,key,body){ const r=R(ST.period,key), chip='<span class="chip-s '+(r?'ok':'no')+'">'+(r?'Terkirim '+dt(r.at):'Belum dikirim')+'</span>';
   return '<section class="panel form-panel"><div class="section-head" style="margin-bottom:6px"><div><p class="section-eyebrow">'+pl(ST.period).toUpperCase()+'</p><h2 class="section-title" style="font-size:18px">'+title+'</h2></div>'+chip+'</div>'+body+'</section>'; }
-const EXR={pd:'Contoh: uang harian, transport, penginapan perjalanan dinas dalam dan luar daerah.',rb:'Contoh: BBM kendaraan dinas, mesin genset, mesin potong rumput.',ra:'Contoh: tagihan air PDAM kantor.',rg:'Contoh: gas elpiji untuk dapur atau pantry kantor.',rl:'Contoh: tagihan listrik PLN kantor, token listrik.',rk:'Contoh: ATK, fotokopi dan cetak, makan minum rapat, bahan habis pakai, honor operasional.'};
+const EXR={pd:'Contoh: uang harian, transport, penginapan perjalanan dinas dalam dan luar daerah.',rb:'Contoh: BBM kendaraan dinas, mesin genset, mesin potong rumput.',ra:'Contoh: tagihan air PDAM kantor, air minum galon.',rg:'Contoh: gas elpiji untuk dapur atau pantry kantor.',rl:'Contoh: tagihan listrik PLN kantor, token listrik.',rk:'Contoh: ATK, fotokopi dan cetak, makan minum rapat, bahan habis pakai, honor operasional.'};
 function keuForm(t,p){
   const r=R(p,'keu:'+t.u), v=(r&&r.v)||{};
   const inp=f=>'<div><label class="f">'+f.t+'</label><input class="t rp" inputmode="numeric" data-k="'+f.k+'" placeholder="0" value="'+(r&&v[f.k]!=null?th(v[f.k]):'')+'" oninput="fmtIn(this)"><p class="hint" style="margin:6px 0 0">'+(EXR[f.k]||'')+'</p></div>';
