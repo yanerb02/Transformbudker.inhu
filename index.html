@@ -278,7 +278,7 @@ async function refresh(){ try{ await reload(); render(); toast('Data dimuat ulan
 function render(){
   if(!ST.me){ loginView(); return; }
   const y=window.scrollY;
-  const v=ST.view; document.body.classList.remove('statmode'); document.body.classList.toggle('lapmode',v==='lap'&&canLap(ST.me)); $('#root').innerHTML = v==='lap'&&canLap(ST.me) ? head(true)+lapView()+foot() :  v==='input'&&canInput(ST.me) ? head(true)+inputView()+foot() : (v==='set'&&ST.me.peran==='admin' ? head(true)+setView()+foot() : head(false)+dashView()+foot());
+  const v=ST.view; if(ST.view==='dash') pdfLibs().catch(()=>{}); document.body.classList.remove('statmode'); document.body.classList.toggle('lapmode',v==='lap'&&canLap(ST.me)); $('#root').innerHTML = v==='lap'&&canLap(ST.me) ? head(true)+lapView()+foot() :  v==='input'&&canInput(ST.me) ? head(true)+inputView()+foot() : (v==='set'&&ST.me.peran==='admin' ? head(true)+setView()+foot() : head(false)+dashView()+foot());
   if($('#keuTot')) keuTot();
   if($('#prRows')) prDraw();
   window.scrollTo(0,y);
@@ -315,7 +315,7 @@ function dashView(){
   '<section id="sec-hm"><div class="section-head"><div><p class="section-eyebrow">REKAP KESELURUHAN</p><h2 class="section-title">Realisasi Belanja &amp; Penghematan</h2></div><p class="section-note">Gabungan seluruh PD, format seperti data pendukung dari BPKAD. Penghematan = realisasi Maret dikurangi realisasi bulan '+pl(p)+'.</p></div><div class="panel">'+safe('rekap',()=>rekapHtml(p))+'</div></section>'+
   '<section id="sec-wfh"><div class="section-head"><div><p class="section-eyebrow">KOMPOSISI ASN</p><h2 class="section-title">Perbandingan WFH dan WFO</h2></div><p class="section-note">Total persentase dalam satu bulan (bukan per hari), diisi oleh masing-masing PD untuk pegawainya.</p></div><div class="panel">'+safe('WFH',()=>wfhHtml(p))+'</div></section>'+
   '<section id="sec-skm"><div class="section-head"><div><p class="section-eyebrow">KUALITAS LAYANAN PUBLIK</p><h2 class="section-title">Hasil Survei Kepuasan Masyarakat (SKM)</h2></div><p class="section-note">Mutu pelayanan mengikuti Permenpan RB No. 14 Tahun 2017.</p></div><div class="panel">'+safe('SKM',()=>skmHtml(p))+'</div></section>'+
-  '<section id="sec-kep"><div class="section-head"><div><p class="section-eyebrow">KEPATUHAN</p><h2 class="section-title">Status Pelaporan '+pl(p)+'</h2></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" style="padding:9px 16px;font-size:13px" onclick="printStatus()">🖨 Cetak / PDF status</button></div></div><div class="panel">'+safe('kepatuhan',()=>kepHtml(p))+'</div></section></main>';
+  '<section id="sec-kep"><div class="section-head"><div><p class="section-eyebrow">KEPATUHAN</p><h2 class="section-title">Status Pelaporan '+pl(p)+'</h2></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" style="padding:9px 16px;font-size:13px" onclick="pdfStatus()">📄 Unduh PDF status</button></div></div><div class="panel">'+safe('kepatuhan',()=>kepHtml(p))+'</div></section></main>';
 }
 function kpiHtml(p){
   const T=tasks(p), done=T.filter(t=>t.r).length, pct=T.length?Math.round(done/T.length*100):0;
@@ -360,6 +360,34 @@ function skmHtml(p){
   const ms=PERIODS.filter(m=>us.some(u=>R(m,'skm:'+u.u)));
   const matrix=ms.length>1?'<div class="table-scroll" style="margin-top:6px"><table><thead><tr><th>Unit layanan</th>'+ms.map(m=>'<th class="num">'+ps(m)+'</th>').join('')+'</tr></thead><tbody>'+us.map(u=>'<tr><td class="name">'+esc(u.nama)+'</td>'+ms.map(m=>{const r=R(m,'skm:'+u.u);return '<td class="num">'+(r?nf(r.ikm,2):'–')+'</td>';}).join('')+'</tr>').join('')+'</tbody></table></div>':'';
   return '<div class="skm-grid">'+cards+'</div>'+(ag.avg!=null?'<div class="mini-stat"><div class="k">RATA-RATA TERTIMBANG JUMLAH RESPONDEN &middot; '+ps(p).toUpperCase()+'</div><div class="v">'+nf(ag.avg,2)+' &middot; '+mutu(ag.avg)[1]+' <span style="font-size:13px;font-weight:600;color:var(--ink-soft)">('+th(ag.rs)+' responden)</span></div></div>':'')+matrix+'<p class="hint" style="margin-top:14px">Mutu: A (Sangat Baik) 88,31&ndash;100 &middot; B (Baik) 76,61&ndash;88,30 &middot; C (Kurang Baik) 65,00&ndash;76,60 &middot; D (Tidak Baik) 25,00&ndash;64,99.</p>';
+}
+/* PDF sungguhan (jsPDF) agar jalan juga di iPad/iPhone dan aplikasi layar utama (window.print sering tidak berfungsi di sana) */
+const PDFLIB=['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'];
+let pdfP=null;
+function loadScript(u){ return new Promise((ok,no)=>{ const e=document.createElement('script'); e.src=u; e.onload=ok; e.onerror=()=>no(new Error(u)); document.head.appendChild(e); }); }
+function pdfLibs(){ if(window.jspdf&&window.jspdf.jsPDF&&window.jspdf.jsPDF.API&&window.jspdf.jsPDF.API.autoTable) return Promise.resolve(); return pdfP||(pdfP=PDFLIB.reduce((a,u)=>a.then(()=>loadScript(u)),Promise.resolve()).catch(e=>{ pdfP=null; throw e; })); }
+async function pdfStatus(){
+  const p=ST.period; toast('Menyiapkan PDF…');
+  try{ await pdfLibs(); }catch(e){ toast('PDF tidak bisa dimuat (periksa internet); memakai cetak biasa'); return printStatus(); }
+  const T=tasks(p), by={}; T.forEach(t=>{ (by[t.u.u]=by[t.u.u]||{u:t.u,t:{}}).t[t.l]=t; });
+  const L=Object.values(by).sort((a,b)=>{ const f=x=>Object.values(x.t).filter(y=>!y.r).length; return f(b)-f(a)||a.u.nama.localeCompare(b.u.nama); });
+  const cols=['Keuangan','WFH/WFO','SKM','Pemanfaatan'].filter(c=>T.some(t=>t.l===c));
+  const done=T.filter(t=>t.r).length, pct=T.length?Math.round(done/T.length*100):0, full=L.filter(x=>Object.values(x.t).every(y=>y.r)).length, dl=getDeadline(p);
+  const cell=t=>!t?'-':(t.r?'Sudah '+dt(t.r.at)+(isLate(t.r,p)?' (terlambat)':''):(t.part?'Sebagian':'Belum'));
+  const doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}), W=doc.internal.pageSize.getWidth();
+  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.text('STATUS PELAPORAN TRANSFORMASI BUDAYA KERJA',W/2,16,{align:'center'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.text('Kabupaten Indragiri Hulu',W/2,22,{align:'center'});
+  doc.text('Periode '+pl(p)+(dl?'  |  Batas waktu '+fmtDate(dl):''),W/2,27,{align:'center'});
+  const now=new Date().toLocaleString('id-ID',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const sm=doc.splitTextToSize(done+' dari '+T.length+' laporan sudah masuk ('+pct+'%). '+full+' dari '+L.length+' Perangkat Daerah sudah lengkap, '+(L.length-full)+' belum lengkap. Dicetak '+now+'.',W-28);
+  doc.setFontSize(9.5); doc.text(sm,14,34);
+  doc.autoTable({startY:34+sm.length*4.6+2,margin:{left:14,right:14,bottom:14},head:[['No.','Perangkat Daerah'].concat(cols)],body:L.map((x,i)=>[i+1,x.u.nama].concat(cols.map(c=>cell(x.t[c])))),
+    styles:{fontSize:8,cellPadding:1.6,lineColor:[90,90,90],lineWidth:0.1,textColor:20},headStyles:{fillColor:[19,74,68],textColor:255,halign:'center'},
+    columnStyles:{0:{cellWidth:9,halign:'center'}},alternateRowStyles:{fillColor:[245,247,246]},
+    didParseCell:d=>{ if(d.section==='body'&&d.column.index>1){ const v=String(d.cell.raw); d.cell.styles.halign='center'; if(v.indexOf('Belum')===0)d.cell.styles.textColor=[180,35,24]; else if(v.indexOf('Sudah')===0)d.cell.styles.textColor=[20,103,63]; else if(v==='Sebagian')d.cell.styles.textColor=[170,110,0]; } }});
+  const fn='Status_Pelaporan_TBK_'+p+'.pdf';
+  try{ const f=new File([doc.output('blob')],fn,{type:'application/pdf'}); if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f],title:'Status Pelaporan TBK '+pl(p)}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
+  doc.save(fn);
 }
 function printStatus(){
   const p=ST.period, T=tasks(p), by={};
